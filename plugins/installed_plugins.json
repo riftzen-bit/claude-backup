@@ -1,0 +1,125 @@
+{
+  "version": 2,
+  "plugins": {
+    "everything-claude-code@everything-claude-code": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/everything-claude-code/everything-claude-code/1.8.0",
+        "version": "1.8.0",
+        "installedAt": "2026-03-10T21:18:56.250Z",
+        "lastUpdated": "2026-03-10T21:18:56.250Z",
+        "gitCommitSha": "af51fcacb70d42ed52ba8111026d9b0f0e49b364"
+      }
+    ],
+    "frontend-design@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/frontend-design/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-10T21:32:21.076Z",
+        "lastUpdated": "2026-03-10T21:32:21.076Z",
+        "gitCommitSha": "f6dbf44cd5f5a90f8fd2608c13f3d7bcf15bfe6f"
+      }
+    ],
+    "learning-output-style@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/learning-output-style/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-10T21:32:28.315Z",
+        "lastUpdated": "2026-03-10T21:32:28.315Z",
+        "gitCommitSha": "f6dbf44cd5f5a90f8fd2608c13f3d7bcf15bfe6f"
+      }
+    ],
+    "claude-hud@claude-hud": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-hud/claude-hud/0.0.9",
+        "version": "0.0.9",
+        "installedAt": "2026-03-11T05:41:27.482Z",
+        "lastUpdated": "2026-03-11T05:41:27.482Z",
+        "gitCommitSha": "c02787bf0e5f020c627c1d13076385cc8d32f2ed"
+      }
+    ],
+    "claude-ultimate-hud@claude-ultimate-hud": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-ultimate-hud/claude-ultimate-hud/1.5.0",
+        "version": "1.5.0",
+        "installedAt": "2026-03-11T06:20:58.156Z",
+        "lastUpdated": "2026-03-13T22:59:59.912Z",
+        "gitCommitSha": "921c45390a77352954ee683c3c854381332d83ef"
+      }
+    ],
+    "superpowers@superpowers-dev": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/superpowers-dev/superpowers/5.0.2",
+        "version": "5.0.2",
+        "installedAt": "2026-03-11T22:35:51.673Z",
+        "lastUpdated": "2026-03-13T22:59:58.968Z",
+        "gitCommitSha": "5ef73d25b71e69e63a74eae359fb26c7a6ac8fc0"
+      }
+    ],
+    "security-guidance@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/security-guidance/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-11T22:40:55.990Z",
+        "lastUpdated": "2026-03-11T22:40:55.990Z",
+        "gitCommitSha": "45b54301267d60b8c2b482ab80d2c0b36443a5f1"
+      }
+    ],
+    "hookify@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/hookify/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-03-11T22:40:56.312Z",
+        "lastUpdated": "2026-03-11T22:40:56.312Z",
+        "gitCommitSha": "45b54301267d60b8c2b482ab80d2c0b36443a5f1"
+      }
+    ],
+    "plugin-dev@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/plugin-dev/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-03-15T22:44:16.159Z",
+        "lastUpdated": "2026-03-15T22:44:16.159Z",
+        "gitCommitSha": "420a1884671fe09addc881f9a62624dae952d21c"
+      }
+    ],
+    "code-review@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/code-review/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-15T22:44:22.340Z",
+        "lastUpdated": "2026-03-15T22:44:22.340Z",
+        "gitCommitSha": "420a1884671fe09addc881f9a62624dae952d21c"
+      }
+    ],
+    "ralph-wiggum@claude-code-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-plugins/ralph-wiggum/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-15T22:44:57.338Z",
+        "lastUpdated": "2026-03-15T22:44:57.338Z",
+        "gitCommitSha": "420a1884671fe09addc881f9a62624dae952d21c"
+      }
+    ],
+    "vtsls@claude-code-lsps": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-code-lsps/vtsls/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-03-15T22:46:36.824Z",
+        "lastUpdated": "2026-03-15T22:46:36.824Z",
+        "gitCommitSha": "b513335d4a45f40758ca44557a223674180e1b08"
+      }
+    ]
+  }
+}

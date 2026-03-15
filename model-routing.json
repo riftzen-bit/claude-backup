@@ -1,0 +1,151 @@
+{
+  "$schema": "Model routing configuration for Claude Code",
+  "version": "2.1.0",
+  "description": "Defines task-to-model mapping with anti-collision, Gemini design dispatch, and smart routing. Opus (leader) uses this to route subtasks.",
+
+  "models": {
+    "haiku": {
+      "id": "haiku",
+      "provider": "anthropic",
+      "cost_tier": 1,
+      "dispatch": "agent",
+      "strengths": ["speed", "simple-tasks", "pattern-matching", "search"],
+      "weaknesses": ["complex-reasoning", "multi-step-logic", "ambiguity"]
+    },
+    "sonnet": {
+      "id": "sonnet",
+      "provider": "anthropic",
+      "cost_tier": 2,
+      "dispatch": "agent",
+      "strengths": ["code-review", "refactoring", "structured-analysis", "test-writing"],
+      "weaknesses": ["deep-architecture", "novel-problem-solving"]
+    },
+    "opus": {
+      "id": "opus",
+      "provider": "anthropic",
+      "cost_tier": 3,
+      "dispatch": "agent",
+      "strengths": ["everything", "complex-reasoning", "architecture", "ambiguous-requirements"],
+      "weaknesses": ["cost"]
+    },
+    "gemini": {
+      "id": "gemini-3.1-pro-preview",
+      "provider": "google",
+      "cost_tier": 2,
+      "dispatch": "cli",
+      "cli_command": "gemini -m gemini-3.1-pro-preview --sandbox false",
+      "timeout": 180,
+      "strengths": ["frontend-design", "ui-components", "css", "visual-layout", "animations", "responsive-design", "color-theory"],
+      "weaknesses": ["backend-logic", "system-architecture"],
+      "auto_detect_keywords": ["design", "redesign", "style", "styling", "UI", "UX", "layout", "CSS", "Tailwind", "animation", "theme", "color", "typography", "font", "landing page", "component visual", "responsive"],
+      "require_opus_review": true,
+      "design_command": "/design"
+    }
+  },
+
+  "routing_rules": [
+    {
+      "task_pattern": "file_search",
+      "description": "Find files, grep content, glob patterns",
+      "model": "haiku",
+      "examples": ["find all tsx files", "search for unused imports", "list files in directory"]
+    },
+    {
+      "task_pattern": "formatting",
+      "description": "Code formatting, linting fixes, style changes",
+      "model": "haiku",
+      "examples": ["fix indentation", "sort imports", "rename variable across files"]
+    },
+    {
+      "task_pattern": "boilerplate",
+      "description": "Generate repetitive code, templates, config files",
+      "model": "haiku",
+      "examples": ["create CRUD endpoints", "generate test boilerplate", "write Dockerfile"]
+    },
+    {
+      "task_pattern": "documentation",
+      "description": "Generate docs, comments, README updates",
+      "model": "haiku",
+      "examples": ["add JSDoc comments", "write API docs", "update README"]
+    },
+    {
+      "task_pattern": "code_review",
+      "description": "Review code for quality, bugs, patterns",
+      "model": "sonnet",
+      "examples": ["review this PR", "check for bugs", "suggest improvements"]
+    },
+    {
+      "task_pattern": "refactoring",
+      "description": "Restructure code without changing behavior",
+      "model": "sonnet",
+      "examples": ["extract function", "split component", "simplify logic"]
+    },
+    {
+      "task_pattern": "bug_fix",
+      "description": "Fix bugs with clear reproduction steps",
+      "model": "sonnet",
+      "examples": ["fix this error", "handle null case", "fix race condition"]
+    },
+    {
+      "task_pattern": "test_writing",
+      "description": "Write unit/integration tests",
+      "model": "sonnet",
+      "examples": ["add tests for auth module", "write integration tests", "increase coverage"]
+    },
+    {
+      "task_pattern": "frontend_design",
+      "description": "UI component design, styling, CSS, visual layout, animations, theming, typography",
+      "model": "gemini",
+      "dispatch_method": "cli_no_sandbox",
+      "auto_detect": true,
+      "examples": ["design login page", "style this component", "add animations", "responsive layout", "create landing page", "redesign the navbar", "update color scheme", "add dark mode", "make it look modern"]
+    },
+    {
+      "task_pattern": "architecture",
+      "description": "System design, major refactoring, new feature design",
+      "model": "opus",
+      "examples": ["design the auth system", "plan database migration", "architect microservices"]
+    },
+    {
+      "task_pattern": "complex_debug",
+      "description": "Debug issues requiring deep reasoning across multiple files",
+      "model": "opus",
+      "examples": ["why is this failing intermittently", "trace this memory leak", "debug race condition"]
+    },
+    {
+      "task_pattern": "security",
+      "description": "Security analysis, vulnerability assessment",
+      "model": "opus",
+      "examples": ["security audit", "check for injection vulnerabilities", "review auth flow"]
+    },
+    {
+      "task_pattern": "planning",
+      "description": "Project planning, requirement analysis, trade-off evaluation",
+      "model": "opus",
+      "examples": ["plan this feature", "evaluate options", "design API contract"]
+    }
+  ],
+
+  "fallback_rules": {
+    "unknown_task": "sonnet",
+    "failed_haiku": "sonnet",
+    "failed_sonnet": "opus",
+    "failed_gemini": "opus",
+    "context_dependent": "opus"
+  },
+
+  "anti_collision": {
+    "require_file_ownership": true,
+    "require_worktree_for_parallel": true,
+    "max_parallel_agents": 10,
+    "on_file_overlap": "sequential_fallback"
+  },
+
+  "settings": {
+    "log_routing_decisions": true,
+    "auto_escalate_on_failure": true,
+    "max_delegation_depth": 2,
+    "prefer_parallel_dispatch": true,
+    "opus_reviews_gemini_output": true
+  }
+}

@@ -1,0 +1,40 @@
+# Testing
+
+## TDD Process
+
+1. **RED**: Write tests describing expected behavior. Run them — they fail
+2. **GREEN**: Write minimal code to make tests pass. Run them — they pass
+3. **REFACTOR**: Improve code while keeping tests green
+
+Every change needs a test: new function, bug fix, API endpoint, logic change, error handling, edge cases. No exceptions for "too small" or "too simple."
+
+## Anti-Vibe-Testing
+
+- Mock only external dependencies, never the system under test
+- Assert behavior, not implementation details
+- Never write tests that just assert the implementation returns what it returns
+- Every test fails first (RED) — a test that never failed proves nothing
+- If coverage jumps >30% in one session, review test quality not just quantity
+- Prefer integration tests over heavily-mocked unit tests for AI-generated code
+
+## Coverage
+
+- Minimum: 80% overall
+- Core business logic: 100%
+- Run coverage check after every TDD cycle
+
+## Zero-Error Loop
+
+After every code change, auto-run all applicable checks:
+- Build/compile, type check, lint, unit tests
+
+If errors found:
+1. Analyze root cause (not symptoms)
+2. Fix root cause — priority: type errors > build > lint > test failures
+3. Re-run all checks
+4. Repeat until clean or 10 iterations
+
+Do not suppress errors with @ts-ignore, eslint-disable, type: ignore, or #[allow(...)].
+
+Report status after each iteration: `[Loop N] Errors: X -> Y`
+When clean: `[CLEAN] Build: OK | Types: OK | Lint: OK | Tests: OK`
