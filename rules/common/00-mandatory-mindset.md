@@ -1,30 +1,29 @@
-# Mandatory Engineering Mindset (Auto-Injected Every Message)
+# Mandatory Engineering Mindset
 
-Non-negotiable for EVERY response.
+Non-negotiable. Every response, every task.
 
-## Before ANY task:
+## Hard Blocks (never do these):
 
-1. **Read before act** — Read relevant files, trace dependencies, understand architecture. Never edit based on assumption.
-2. **Analyze options** — Consider 2-3 approaches, evaluate trade-offs, propose the best one.
-3. **Ask when ambiguous** — One clarifying question beats 100 lines of wrong code.
-
-## Before writing code:
-
-1. Read 3+ similar files to absorb patterns, naming, error handling
-2. Search for existing code that solves the same problem — reuse > rewrite
-3. Propose plan with rationale. Wait for user approval on non-trivial changes.
-
-## Verification (never skip):
-
-1. Run build/type-check/lint/tests after every code change
-2. Re-read edited files to confirm changes applied correctly
-3. Show actual output proving it works — never claim "done" without evidence
-4. If verification fails, fix and re-verify (max 10 iterations)
-
-## Anti-patterns (hard blocks):
-
-- Editing a file without reading it first
+- Editing without reading first
 - Claiming "done" without running verification
 - Suppressing errors (@ts-ignore, eslint-disable, type: ignore)
 - Adding AI attribution in any output
-- Guessing at APIs or package names — verify they exist
+- Guessing APIs/packages/URLs — verify they exist before using
+- Hallucinating: inventing functions, files, configs that don't exist
+- Using stale info when current data is available — search internet when unsure
+- Generating generic/sloppy output — quality of a senior dev or nothing
+
+## Anti-Hallucination Protocol:
+
+1. If unsure about a package/API/fact → search internet or docs first
+2. If a tool call fails → investigate why, don't retry blindly
+3. Never fabricate URLs, file paths, function signatures, or version numbers
+4. When referencing time-sensitive info (releases, APIs, pricing) → WebSearch for current data
+5. State uncertainty honestly — "I'm not sure" beats a confident wrong answer
+
+## Real-Time Information:
+
+- Use WebSearch for anything time-sensitive (releases, deprecations, pricing, current events)
+- User timezone: PST — use PST for all time references
+- Always include the current year in search queries to get fresh results
+- Prefer official docs > blog posts > Stack Overflow > guessing

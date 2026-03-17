@@ -7,46 +7,23 @@ paths:
 ---
 # TypeScript/JavaScript Patterns
 
-> This file extends [common/patterns.md](../common/patterns.md) with TypeScript/JavaScript specific content.
+> Detect and follow the project's existing patterns. These are defaults ONLY when no existing pattern is found.
 
-## API Response Format
+## API Responses
 
-```typescript
-interface ApiResponse<T> {
-  success: boolean
-  data?: T
-  error?: string
-  meta?: {
-    total: number
-    page: number
-    limit: number
-  }
-}
-```
+Before writing API handlers, read 3+ existing endpoints. Match the project's:
+- Response envelope (success/data/error vs raw data vs Result type)
+- Pagination format
+- Error code structure
 
-## Custom Hooks Pattern
+## React Hooks
 
-```typescript
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+- Custom hooks: prefix `use`, return typed values, cleanup in useEffect return
+- Prefer derived state over useEffect for computed values
+- Debounce/throttle via custom hooks, not inline timers
 
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedValue(value), delay)
-    return () => clearTimeout(handler)
-  }, [value, delay])
+## Data Layer
 
-  return debouncedValue
-}
-```
-
-## Repository Pattern
-
-```typescript
-interface Repository<T> {
-  findAll(filters?: Filters): Promise<T[]>
-  findById(id: string): Promise<T | null>
-  create(data: CreateDto): Promise<T>
-  update(id: string, data: UpdateDto): Promise<T>
-  delete(id: string): Promise<void>
-}
-```
+- Repository/service pattern: detect from project, don't impose
+- Always type query params and return values
+- Prefer `unknown` over `any` for external data, validate with Zod

@@ -7,7 +7,7 @@ paths:
 ---
 # TypeScript/JavaScript Coding Style
 
-> This file extends [common/coding-style.md](../common/coding-style.md) with TypeScript/JavaScript specific content.
+> Extends common/02-code-quality.md with TypeScript/JavaScript specifics.
 
 ## Immutability
 
@@ -60,6 +60,17 @@ const validated = schema.parse(input)
 
 ## Console.log
 
-- No `console.log` statements in production code
-- Use proper logging libraries instead
-- See hooks for automatic detection
+- No `console.log` in production code — use structured logging
+- PostToolUse hook warns on console.log in edited files
+
+## Security
+
+- Never hardcode secrets — use `process.env` + startup validation
+- Use Zod for all external input validation at boundaries
+- Use `security-reviewer` agent for comprehensive audits before commits
+
+## Testing
+
+- Playwright for E2E testing of critical user flows
+- Use `e2e-runner` agent for E2E test generation/maintenance
+- Vitest preferred for unit tests (detect from project config)

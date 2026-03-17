@@ -9,3 +9,4 @@
 
 ## Project
 - [project_ide.md](project_ide.md) — IDE project vision and decisions
+- [project_regex_builder.md](project_regex_builder.md) — Regex Builder web app — Astro + Preact, Brutalist design

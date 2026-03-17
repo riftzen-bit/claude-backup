@@ -8,7 +8,7 @@
 ## Configuration Map
 All rules auto-loaded from `~/.claude/rules/`:
 - `common/00-08`: Engineering mindset, workflow, code quality, testing, safety, production, frontend, self-optimization, model routing
-- `typescript/`: TS-specific coding style, hooks, patterns, security, testing
+- `typescript/`: TS-specific coding style, patterns
 
 ## Custom Agents (`~/.claude/agents/`)
 - `open-source-librarian`: Library research with GitHub permalinks + context7
@@ -25,9 +25,9 @@ All rules auto-loaded from `~/.claude/rules/`:
 
 ## Key Behaviors
 - Proactive, autonomous — handle everything end-to-end
+- Zero hallucination — verify before stating, search when unsure
 - Token efficient — every token costs money
 - Never add AI attribution in output
 - Never claim "done" without running verification
-- Re-read files before editing if >5 tool calls since last read
 - After compaction: re-read memory, CLAUDE.md, git log
 - Direct tools (Grep/Glob/Read) for simple tasks, agents for parallel work

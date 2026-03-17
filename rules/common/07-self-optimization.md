@@ -1,57 +1,32 @@
-# Self-Optimization Protocol (Auto-Active Every Session)
+# Self-Optimization Protocol (Auto-Active)
 
-## Continuous Improvement Loop
+## Improvement Loop
 
-After every significant task completion, run this cycle:
-1. **Reflect**: What went wrong? What was unexpectedly hard? What worked perfectly?
-2. **Abstract**: Extract the general pattern from the specific incident
-3. **Write**: Update the appropriate file — rules/, memory/, skills/, or CLAUDE.md
+After significant tasks: Reflect → Abstract pattern → Write to rules/memory/skills.
 
 ## Promotion Thresholds
 
-- Memory learning influences behavior 2+ times → promote to `~/.claude/rules/`
-- Rule exceeds 50 lines on one topic → split into rule + reference doc in project
-- Workflow succeeds 3+ times → create a skill from it
-- Memory reaches 30+ entries → consolidate themes, archive old entries
-
-## Configuration Health Checks
-
-When starting a session in any project, silently verify:
-- CLAUDE.md exists and is under 150 lines (project) or 50 lines (global)
-- Rules total under 800 lines across all files
-- No duplicate content between CLAUDE.md, rules, and memory
-- Memory files are not stale (check dates vs current date)
-
-If any check fails, note it and fix during natural workflow — do not interrupt user.
+- Memory used 2+ times → promote to rules/
+- Rule >50 lines → split into rule + reference doc
+- Workflow succeeds 3+ times → create skill
+- Memory 30+ entries → consolidate, archive
 
 ## Feedback Integration
 
-When the user corrects your approach:
-1. Save as feedback memory immediately (type: feedback)
-2. Include WHY the feedback was given and HOW TO APPLY it
-3. Check if feedback contradicts any existing rule — update rule if needed
-4. Never make the same mistake twice
+When user corrects approach:
+1. Save feedback memory immediately (include WHY + HOW TO APPLY)
+2. Check for contradicting rules — update if needed
+3. Never repeat same mistake
 
-## Session-End Awareness
+## Config Health (silent check at session start)
 
-Before ending any session, consider:
-- Were new patterns discovered? → Update appropriate file
-- Were existing rules violated? → Strengthen the rule
-- Were skills suboptimal? → Add improvement notes to skill
-- Was context management efficient? → Note what to change in memory
-
-## Context Budget Discipline
-
-- Always-loaded config (CLAUDE.md + rules + hooks) should consume <15% of context window
-- MCP servers are token-expensive — each tool description loads into context
-- Use reference files (lazy-loaded) over CLAUDE.md (always-loaded) for detailed content
-- Sub-agents for data-heavy operations — keep main thread clean
-- Compact at 60% context usage with specific retention instructions
+- Global CLAUDE.md <50 lines, project <150 lines
+- Total rules <600 lines
+- No duplicates across files
+- Always-loaded config <15% of context window
 
 ## Anti-Degradation
 
-- Every rule must be concrete and verifiable (not "try to..." or "strive for...")
-- Every line in config must pass: "Would removing this cause specific mistakes?"
-- No aspirational content — only actionable directives
-- No duplicates across files — one source of truth per concept
-- Archive over delete when removing content
+- Every rule: concrete, verifiable, actionable
+- Every line must pass: "Would removing this cause specific mistakes?"
+- No duplicates — one source of truth per concept

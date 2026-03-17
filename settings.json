@@ -56,7 +56,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '<pre-compact-hook>Save critical state to memory files before compaction. Re-read MEMORY.md and git log after compaction completes.</pre-compact-hook>'"
+            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — save state NOW:\n1. Save any new feedback/learnings to memory files\n2. Note current task progress (what is done, what remains)\n3. After compaction: re-read ~/.claude/projects/-home-paul/memory/MEMORY.md, ~/.claude/CLAUDE.md, and run git log --oneline -10\n4. Re-read any files you were actively editing\n5. User: Paul, Vietnamese speaker, non-programmer, PST timezone</pre-compact-hook>'"
           }
         ]
       }
