@@ -3,6 +3,7 @@ name: media-interpreter
 description: Extract information from PDFs, images, diagrams, charts, and screenshots. Use when Read tool returns garbled content or when structured data extraction from binary files is needed.
 tools: Bash, Read
 model: haiku
+max_turns: 5
 color: orange
 ---
 

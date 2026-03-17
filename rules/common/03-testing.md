@@ -34,7 +34,5 @@ If errors found:
 3. Re-run all checks
 4. Repeat until clean or 10 iterations
 
-Do not suppress errors with @ts-ignore, eslint-disable, type: ignore, or #[allow(...)].
-
 Report status after each iteration: `[Loop N] Errors: X -> Y`
 When clean: `[CLEAN] Build: OK | Types: OK | Lint: OK | Tests: OK`

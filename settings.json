@@ -1,6 +1,5 @@
 {
   "env": {
-    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
     "MAX_THINKING_TOKENS": "31999",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
@@ -23,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/paul/.claude/plugins/cache/everything-claude-code/everything-claude-code/1.8.0/skills/continuous-learning-v2/hooks/observe.sh pre",
+            "command": "/home/paul/.claude/hooks/ecc-observe.sh pre",
             "timeout": 10
           }
         ]
@@ -45,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/post-tool.sh",
+            "command": "/home/paul/.claude/hooks/post-tool.sh",
             "timeout": 10
           }
         ]
@@ -56,7 +55,30 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — save state NOW:\n1. Save any new feedback/learnings to memory files\n2. Note current task progress (what is done, what remains)\n3. After compaction: re-read ~/.claude/projects/-home-paul/memory/MEMORY.md, ~/.claude/CLAUDE.md, and run git log --oneline -10\n4. Re-read any files you were actively editing\n5. User: Paul, Vietnamese speaker, non-programmer, PST timezone</pre-compact-hook>'"
+            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — save state NOW:\n1. Save any new feedback/learnings to memory files\n2. Note current task progress (what is done, what remains)\n3. After compaction: re-read /home/paul/.claude/projects/-home-paul/memory/MEMORY.md, /home/paul/.claude/CLAUDE.md, and run git log --oneline -10\n4. Re-read any files you were actively editing\n5. User: Paul, Vietnamese speaker, non-programmer, PST timezone</pre-compact-hook>'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/session-start.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/subagent-stop.sh",
+            "timeout": 3
           }
         ]
       }
@@ -75,17 +97,15 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash -c '\"/home/paul/.bun/bin/bun\" \"$(ls -td ~/.claude/plugins/cache/claude-ultimate-hud/claude-ultimate-hud/*/ 2>/dev/null | head -1 || ls -d ~/.claude/plugins/claude-ultimate-hud/ 2>/dev/null)src/index.ts\"'"
+    "command": "bash -c '\"/home/paul/.bun/bin/bun\" \"$(ls -td /home/paul/.claude/plugins/cache/claude-ultimate-hud/claude-ultimate-hud/*/ 2>/dev/null | head -1 || ls -d /home/paul/.claude/plugins/claude-ultimate-hud/ 2>/dev/null)src/index.ts\"'"
   },
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
     "frontend-design@claude-code-plugins": true,
     "learning-output-style@claude-code-plugins": true,
-    "claude-hud@claude-hud": true,
     "claude-ultimate-hud@claude-ultimate-hud": true,
     "superpowers@superpowers-dev": true,
     "security-guidance@claude-code-plugins": true,
-    "hookify@claude-code-plugins": false,
     "plugin-dev@claude-code-plugins": true,
     "code-review@claude-code-plugins": true,
     "ralph-wiggum@claude-code-plugins": true,
@@ -102,12 +122,6 @@
       "source": {
         "source": "git",
         "url": "https://github.com/anthropics/claude-code.git"
-      }
-    },
-    "claude-hud": {
-      "source": {
-        "source": "github",
-        "repo": "jarrodwatts/claude-hud"
       }
     },
     "claude-ultimate-hud": {

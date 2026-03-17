@@ -1,19 +1,22 @@
 #!/bin/bash
 # Combined PostToolUse hook: observe + review + screenshot + import check
-# Single hook = single "Async hook Stop completed" message
+# Optimized: pure bash pattern matching, no Python subprocess
 
 INPUT_JSON=$(cat)
 
 # 1. Continuous learning observation (background, silent)
-echo "$INPUT_JSON" | /home/paul/.claude/plugins/cache/everything-claude-code/everything-claude-code/1.8.0/skills/continuous-learning-v2/hooks/observe.sh post 2>/dev/null &
+echo "$INPUT_JSON" | /home/paul/.claude/hooks/ecc-observe.sh post &
 
-# 2. Extract tool name and output
-TOOL_NAME=$(echo "$INPUT_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_name",""))' 2>/dev/null || echo "")
+# 2. Fast tool detection — pure bash, no Python
+# Check Edit/Write/NotebookEdit
+if [[ "$INPUT_JSON" == *'"tool_name":"Edit"'* ]] || \
+   [[ "$INPUT_JSON" == *'"tool_name":"Write"'* ]] || \
+   [[ "$INPUT_JSON" == *'"tool_name":"NotebookEdit"'* ]] || \
+   [[ "$INPUT_JSON" == *'"tool_name": "Edit"'* ]] || \
+   [[ "$INPUT_JSON" == *'"tool_name": "Write"'* ]] || \
+   [[ "$INPUT_JSON" == *'"tool_name": "NotebookEdit"'* ]]; then
 
-case "$TOOL_NAME" in
-  Edit|Write|NotebookEdit)
-    # Auto-review reminder
-    cat <<'EOF'
+  cat <<'EOF'
 <post-edit-review>
 You just modified a file. Review your own change:
 - Re-read the edited file to verify correctness
@@ -22,31 +25,40 @@ You just modified a file. Review your own change:
 </post-edit-review>
 EOF
 
-    # UI screenshot reminder for frontend files
-    FILE_PATH=$(echo "$INPUT_JSON" | python3 -c 'import json,sys; d=json.load(sys.stdin).get("tool_input",{}); print(d.get("file_path",d.get("path","")))' 2>/dev/null || echo "")
-    case "$FILE_PATH" in
-      *.tsx|*.jsx|*.vue|*.svelte|*.css|*.scss|*.html)
-        cat <<'EOF'
+  # UI screenshot reminder for frontend files
+  if [[ "$INPUT_JSON" == *'.tsx"'* ]] || [[ "$INPUT_JSON" == *'.jsx"'* ]] || \
+     [[ "$INPUT_JSON" == *'.vue"'* ]] || [[ "$INPUT_JSON" == *'.svelte"'* ]] || \
+     [[ "$INPUT_JSON" == *'.css"'* ]] || [[ "$INPUT_JSON" == *'.scss"'* ]] || \
+     [[ "$INPUT_JSON" == *'.html"'* ]]; then
+    cat <<'EOF'
 <post-ui-change>
 UI file modified. Visually verify with Playwright screenshot.
 </post-ui-change>
 EOF
-        ;;
-    esac
-    ;;
-  Bash)
-    # Check for failed installs or module-not-found errors
-    TOOL_OUTPUT=$(echo "$INPUT_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_output",""))' 2>/dev/null || echo "")
-    if echo "$TOOL_OUTPUT" | grep -qi "module not found\|not found in registry\|404 Not Found\|ERR_MODULE_NOT_FOUND\|No matching version\|Cannot find module" 2>/dev/null; then
-      cat <<'EOF'
+  fi
+
+# Check Bash for hallucinated packages
+elif [[ "$INPUT_JSON" == *'"tool_name":"Bash"'* ]] || \
+     [[ "$INPUT_JSON" == *'"tool_name": "Bash"'* ]]; then
+
+  # Case-insensitive check for module-not-found errors
+  INPUT_LOWER="${INPUT_JSON,,}"
+  if [[ "$INPUT_LOWER" == *"module not found"* ]] || \
+     [[ "$INPUT_LOWER" == *"not found in registry"* ]] || \
+     [[ "$INPUT_LOWER" == *"404 not found"* ]] || \
+     [[ "$INPUT_LOWER" == *"err_module_not_found"* ]] || \
+     [[ "$INPUT_LOWER" == *"no matching version"* ]] || \
+     [[ "$INPUT_LOWER" == *"cannot find module"* ]] || \
+     [[ "$INPUT_LOWER" == *"no such package"* ]] || \
+     [[ "$INPUT_LOWER" == *"package not found"* ]]; then
+    cat <<'EOF'
 <hallucination-warning>
 Package/module not found. This may be a hallucinated package name.
 Verify the package exists: check npm/PyPI/crates.io before retrying.
 </hallucination-warning>
 EOF
-    fi
-    ;;
-esac
+  fi
+fi
 
 wait
 exit 0

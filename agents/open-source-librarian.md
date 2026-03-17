@@ -3,6 +3,7 @@ name: open-source-librarian
 description: Research open-source libraries — find implementation source code with GitHub permalinks, query official docs via context7, investigate issues/PRs/history. Use when questions involve external library internals, best practices, or OSS code evidence.
 tools: Glob, Grep, Read, WebFetch, Bash, mcp__context7__resolve-library-id, mcp__context7__query-docs, WebSearch
 model: sonnet
+max_turns: 15
 color: yellow
 ---
 

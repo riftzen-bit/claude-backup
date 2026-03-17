@@ -24,8 +24,7 @@
 
 1. Run build, type check, lint, tests — fix until clean (max 10 iterations)
 2. Re-read edited file to confirm changes applied
-3. Never claim "done" without verification output
-4. Commit: `<type>: <description>` (feat, fix, refactor, docs, test, chore)
+3. Commit: `<type>: <description>` (feat, fix, refactor, docs, test, chore)
 
 ## Scope Discipline
 
