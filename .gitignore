@@ -1,49 +1,21 @@
-# Secrets & credentials
+# Session/cache data
 .credentials.json
-*.env
-credentials*
-tokens*
-.sl-api
-.sl-plan
-.sl-ver
-
-# Plugin cache (large, auto-generated)
+.oauthtoken
+.sl-*
+*.log
+*.jsonl
+routing-logs/
+security_warnings_state_*
+file-history/
+debug/
+backups/
+cache/
+downloads/
+todos/
+statsig/
 plugins/cache/
 plugins/marketplaces/
-plugins/install-counts-cache.json
-plugins/known_marketplaces.json
-plugins/blocklist.json
-
-# Session state & cache
-*.local.md
-*.local.json
-*-cache.json
-*-cache-*.json
+*.backup.*
 .session-stats.json
 .omc-update.log
-backups/
-debug/
-file-history/
-cache/
-paste-cache/
-image-cache/
-sessions/
-shell-snapshots/
-telemetry/
-tasks/
-statusline-command.sh
-
-# Tool results & subagent metadata (session-specific, auto-generated)
-**/tool-results/
-**/subagents/
-security_warnings_state_*.json
-
-# ECC homunculus
-homunculus/
-
-# Conversation logs
-*.jsonl
-
-# OS files
-.DS_Store
-Thumbs.db
+claude-ultimate-hud-*.json

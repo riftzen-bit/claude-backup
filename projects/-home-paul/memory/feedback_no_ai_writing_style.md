@@ -2,6 +2,7 @@
 name: No AI writing style in public comments
 description: When writing public-facing comments (GitHub, social media, forums), avoid obvious AI patterns that get called out
 type: feedback
+created: 2026-03-14
 ---
 
 When writing public comments on behalf of user, DO NOT use AI-obvious formatting:

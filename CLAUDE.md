@@ -7,7 +7,7 @@
 
 ## Configuration Map
 All rules auto-loaded from `~/.claude/rules/`:
-- `common/00-08`: Engineering mindset, workflow, code quality, testing, safety, production, frontend, self-optimization, model routing
+- `common/00-07`: Engineering mindset, workflow, code quality, testing, safety, production, self-optimization, model routing
 - `typescript/`: TS-specific coding style, patterns
 
 ## Custom Agents (`~/.claude/agents/`)
@@ -15,6 +15,7 @@ All rules auto-loaded from `~/.claude/rules/`:
 - `media-interpreter` (haiku): Extract info from PDFs, images, diagrams
 
 ## Custom Skills (`~/.claude/skills/`)
+- `anti-ai-design`: Auto-trigger frontend skill — AI fingerprint blacklist + curated alternatives + verification
 - `vercel-react-best-practices`: 45 React/Next.js performance rules from Vercel
 - `planning-with-files`: Manus-style persistent markdown planning
 - `web-design-guidelines`: UI accessibility/design audit
@@ -28,13 +29,12 @@ All rules auto-loaded from `~/.claude/rules/`:
 - `/self-optimize`: Deep audit all configuration
 - `/benchmark`: Automated quality benchmark
 
-## Hooks (7 event types)
-- SessionStart → auto-load memory + git context
-- UserPromptSubmit → routing enforcer + AI attribution guard
-- PreToolUse → ECC observation (*), routing guard (Agent)
-- PostToolUse → self-review, UI verify, hallucination detection
-- SubagentStop → routing stats logger
-- PreCompact → save state reminder | Stop → completion sound
+## Enforcement
+- `~/.claude/enforce.md` — injected into EVERY message via UserPromptSubmit hook
+- SessionStart[compact] → re-injects enforce.md after compaction
+- PostToolUse → self-review + hallucination detection
+- PreToolUse → routing guard (Agent), ECC observation (*)
+- PreCompact → save state | Stop → completion sound
 
 ## Memory
 - Index: `~/.claude/projects/{project}/memory/MEMORY.md`

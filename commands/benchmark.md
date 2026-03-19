@@ -86,8 +86,8 @@ S=0
 # Valid JSON: 5 pts
 python3 -c "import json; json.load(open('$HOME/.claude/settings.json'))" 2>/dev/null && S=$((S+5)) && echo "  Valid JSON: ✓" || echo "  Valid JSON: ✗"
 # No tilde paths in commands: 5 pts
-TILDE=$(grep '"command":' ~/.claude/settings.json 2>/dev/null | grep -c '~/')
-[ $TILDE -eq 0 ] && S=$((S+5)) && echo "  Path consistency: ✓" || echo "  Path consistency: $TILDE tilde paths ✗"
+TILDE=$(grep '"command":' ~/.claude/settings.json 2>/dev/null | grep -c '~/' || true)
+if [ "$TILDE" -eq 0 ]; then S=$((S+5)); echo "  Path consistency: ✓"; else echo "  Path consistency: $TILDE tilde paths ✗"; fi
 # No stale files: 5 pts
 STALE=$(ls ~/.claude/security_warnings_state_*.json 2>/dev/null | wc -l)
 [ $STALE -eq 0 ] && S=$((S+5)) && echo "  Cleanliness: ✓" || echo "  Cleanliness: $STALE stale files ✗"

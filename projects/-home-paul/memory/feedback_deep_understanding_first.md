@@ -2,6 +2,7 @@
 name: deep-understanding-before-code
 description: Always deeply understand codebase first, think like world-class engineer with multi-option analysis, propose plan before coding, get approval
 type: feedback
+created: 2026-03-14
 ---
 
 Every task must follow this mandatory sequence — no exceptions:

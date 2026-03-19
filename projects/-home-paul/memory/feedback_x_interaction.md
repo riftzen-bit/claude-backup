@@ -2,6 +2,7 @@
 name: X/Twitter interaction style
 description: Use Sonnet 4.6 for social media interaction, write 100% naturally, no AI tone, continuous until user cancels
 type: feedback
+created: 2026-03-14
 ---
 
 Use Sonnet 4.6 (not Opus) for X/Twitter interaction — it writes more naturally and costs less.

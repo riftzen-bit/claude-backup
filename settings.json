@@ -55,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — save state NOW:\n1. Save any new feedback/learnings to memory files\n2. Note current task progress (what is done, what remains)\n3. After compaction: re-read /home/paul/.claude/projects/-home-paul/memory/MEMORY.md, /home/paul/.claude/CLAUDE.md, and run git log --oneline -10\n4. Re-read any files you were actively editing\n5. User: Paul, Vietnamese speaker, non-programmer, PST timezone</pre-compact-hook>'"
+            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — MANDATORY ACTIONS:\n1. Save feedback/learnings to memory files NOW\n2. Save current task state (done/remaining) to memory\n3. List ALL files you were editing (paths)\n4. After compaction: post-compact.sh will fire — read ALL files it tells you\n5. enforce.md will re-inject via UserPromptSubmit — follow it\n6. Owner: Paul, Vietnamese, non-programmer, PST</pre-compact-hook>'"
           }
         ]
       }
@@ -66,6 +66,16 @@
           {
             "type": "command",
             "command": "/home/paul/.claude/hooks/session-start.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/post-compact.sh",
             "timeout": 5
           }
         ]
@@ -106,10 +116,8 @@
     "claude-ultimate-hud@claude-ultimate-hud": true,
     "superpowers@superpowers-dev": true,
     "security-guidance@claude-code-plugins": true,
-    "plugin-dev@claude-code-plugins": true,
     "code-review@claude-code-plugins": true,
-    "ralph-wiggum@claude-code-plugins": true,
-    "vtsls@claude-code-lsps": true
+    "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "everything-claude-code": {
@@ -140,6 +148,12 @@
       "source": {
         "source": "github",
         "repo": "Piebald-AI/claude-code-lsps"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
       }
     }
   },

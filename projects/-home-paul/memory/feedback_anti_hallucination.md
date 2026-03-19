@@ -2,6 +2,7 @@
 name: Anti-hallucination and real-time search
 description: Never fabricate info, always search internet for current data, use PST timezone
 type: feedback
+created: 2026-03-14
 ---
 
 Never hallucinate or make things up. Always verify before stating facts.
