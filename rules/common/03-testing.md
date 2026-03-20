@@ -23,6 +23,12 @@ Every change needs a test: new function, bug fix, API endpoint, logic change, er
 - Core business logic: 100%
 - Run coverage check after every TDD cycle
 
+## Validation Discovery
+
+- Detect the repo's real validator commands before coding (`package.json`, `pyproject.toml`, `go.mod`, Makefile, CI config, etc.)
+- If a validator does not exist, say so explicitly instead of pretending it passed
+- If the repo has no usable test harness, state that clearly and use the closest available safety net
+
 ## Zero-Error Loop
 
 After every code change, auto-run all applicable checks:
@@ -35,4 +41,5 @@ If errors found:
 4. Repeat until clean or 10 iterations
 
 Report status after each iteration: `[Loop N] Errors: X -> Y`
+For every validator, record: command, exit code, and key output lines
 When clean: `[CLEAN] Build: OK | Types: OK | Lint: OK | Tests: OK`

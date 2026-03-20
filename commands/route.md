@@ -9,6 +9,10 @@ You are the orchestrator (Opus 4.6). Decompose the user's request into subtasks 
 
 ## Step 1: Analyze the Request
 
+Before decomposing:
+- If desired behavior, scope, or acceptance criteria are unclear, ask concise product questions first
+- Do not ask the user for technical implementation choices unless unavoidable
+
 Read the user's message and identify:
 1. What are the distinct subtasks?
 2. Which subtasks are independent (can run in parallel)?
@@ -22,10 +26,19 @@ For each subtask, assign a complexity tier:
 
 | Tier | Model | Cost | Use for |
 |------|-------|------|---------|
-| SIMPLE | haiku | $0.25/$1.25 per M tokens | File search, grep, glob, formatting, boilerplate, docs, simple Q&A, rename/move |
-| MEDIUM | sonnet | $3/$15 per M tokens | Code review, refactor, bug fix (clear scope), test writing, summarization, data transform |
-| COMPLEX | opus | $15/$75 per M tokens | Architecture, complex debug, multi-file reasoning, security, ambiguous requirements, planning |
-| FRONTEND | gemini | Google AI billing | UI design, component styling, CSS/Tailwind, visual layout, animations, responsive design |
+| SIMPLE | haiku | $0.25/$1.25 per M tokens | File search, grep, glob, validator discovery, formatting, boilerplate, docs, simple Q&A, rename/move |
+| MEDIUM | sonnet | $3/$15 per M tokens | Planning, code review, refactor, bug fix (clear scope), test writing, validation, summarization, data transform |
+| COMPLEX | opus | $15/$75 per M tokens | Architecture, complex debug, multi-file reasoning, security, ambiguous requirements |
+| FRONTEND | gemini | Google AI billing | UI design, component styling, CSS/Tailwind, visual layout, animations, responsive design — only after explicit user opt-in |
+
+Default specialist mapping:
+- `repo-scout` = haiku
+- `planner` = sonnet
+- `code-reviewer` = sonnet
+- `validator` = sonnet
+- `security-reviewer` = opus
+- `open-source-librarian` = sonnet
+- `media-interpreter` = haiku
 
 ## Step 3: Anti-Collision Check
 
@@ -69,8 +82,9 @@ Agent tool call:
 ```
 
 **For Gemini (frontend tasks):**
-Use the `/design` command — it spawns a real Gemini tmux worker with filesystem access.
-Gemini edits files directly, Opus validates via `git diff` before keeping changes.
+Use the `/design` command only with explicit user opt-in.
+It spawns a real Gemini tmux worker with direct workspace write access.
+Gemini edits files directly, then Opus validates via `git diff`, repo validators, and review before keeping changes.
 
 Do NOT use `timeout` + Bash for Gemini — that's the old approach. `/design` handles everything:
 project context gathering, anti-slop enforcement, git safety net, tmux worker, and Opus validation.
@@ -79,8 +93,9 @@ Rules:
 - Independent subtasks with no file overlap: dispatch ALL in a single message (parallel)
 - Overlapping subtasks: dispatch in sequential batches
 - Include all necessary context in the prompt — subagents have NO access to conversation history
-- For file-related tasks: include exact file paths and current file contents in the prompt
-- For Gemini: use `/design` command (tmux worker with `--sandbox false` filesystem access)
+- For file-related tasks: include exact file paths and only the minimum non-sensitive excerpts needed
+- For Gemini: use `/design` only after explicit user approval; otherwise keep the work on Claude
+- Never send secrets, credentials, or private notes to `/design`
 - Opus reviews ALL Gemini file changes via `git diff` before keeping — never apply unvalidated
 
 ## Step 5: Aggregate Results
@@ -89,12 +104,14 @@ After all subagents complete:
 1. Review each result for quality
 2. If any result is low quality: retry with one tier higher model
 3. For Gemini output: validate HTML/CSS/JSX correctness before applying
-4. Synthesize results into a coherent response
-5. Report routing decisions and estimated savings
+4. For Gemini output: run the repo's real validators before keeping the changes
+5. Synthesize results into a coherent response
+6. Report routing decisions and estimated savings
 
 ## Step 6: Log Routing Summary
 
-At the end, output a routing summary:
+Hooks already write JSONL routing events under `~/.claude/routing-logs/` for `/routing-stats`.
+At the end, also output a human-readable routing summary:
 
 ```
 [Routing Summary]

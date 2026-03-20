@@ -1,9 +1,14 @@
 #!/bin/bash
-# SessionStart hook — force-load ALL context at session start
-# This fires once at session start (not after compaction — see post-compact.sh)
+# SessionStart hook — load core context and execution policy
 
 MEMORY_FILE="/home/paul/.claude/projects/-home-paul/memory/MEMORY.md"
 ENFORCE_FILE="/home/paul/.claude/enforce.md"
+STATE_DIR="/home/paul/.claude/state"
+SESSION_KEY="${CLAUDE_SESSION_ID:-$PPID}"
+SESSION_FILE="$STATE_DIR/current-session-id.$SESSION_KEY"
+
+mkdir -p "$STATE_DIR"
+[ -f "$SESSION_FILE" ] || printf '%s\n' "$(date -u +%Y%m%dT%H%M%SZ)-$$" > "$SESSION_FILE"
 
 # Check for stale files
 STALE_COUNT=$(ls /home/paul/.claude/security_warnings_state_*.json 2>/dev/null | wc -l)
@@ -13,20 +18,23 @@ STALE_MSG=""
 
 cat <<EOF
 <session-init>
-SESSION START — MANDATORY CONTEXT LOADING
+SESSION START — LOAD CONTEXT BEFORE ACTION
 
 You MUST read these files before doing ANYTHING:
 1. MEMORY: $MEMORY_FILE
 2. ENFORCE: $ENFORCE_FILE
 3. CLAUDE.md: /home/paul/.claude/CLAUDE.md
-4. If in git repo: git log --oneline -5
+4. RULES: /home/paul/.claude/rules/common/ and /home/paul/.claude/rules/typescript/
+5. If in a repo: README/CLAUDE.md plus build/test config and git log --oneline -5
 
-After reading, classify the user's first message:
-A) WORK → show routing table, then execute
-B) FRONTEND → invoke anti-ai-design skill + /design
-C) CHAT → answer directly
+FIRST MESSAGE POLICY:
+- If desired behavior, scope, or acceptance criteria are unclear → ask concise product questions first
+- If the task is clear → map relevant files and validator commands before editing
+- For coding/debugging/refactor tasks → load execution-guard and route search/review/validation to cheaper specialists
+- For frontend/UI tasks → load anti-ai-design before implementation
+- For simple chat/questions → answer directly
 
 Owner: Paul, Vietnamese speaker, non-programmer, PST timezone.
-Model: Opus 4.6, max effort, always.${STALE_MSG}
+Model policy: Opus leads ambiguity/architecture/security; delegate simpler work.${STALE_MSG}
 </session-init>
 EOF

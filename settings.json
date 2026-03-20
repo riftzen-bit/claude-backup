@@ -2,7 +2,8 @@
   "env": {
     "MAX_THINKING_TOKENS": "31999",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_ENABLE_ECC_OBSERVE": "0"
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -28,6 +29,16 @@
         ]
       },
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/pre-write-guard.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "Agent",
         "hooks": [
           {
@@ -46,6 +57,11 @@
             "type": "command",
             "command": "/home/paul/.claude/hooks/post-tool.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/notify.sh",
+            "timeout": 5
           }
         ]
       }
@@ -55,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — MANDATORY ACTIONS:\n1. Save feedback/learnings to memory files NOW\n2. Save current task state (done/remaining) to memory\n3. List ALL files you were editing (paths)\n4. After compaction: post-compact.sh will fire — read ALL files it tells you\n5. enforce.md will re-inject via UserPromptSubmit — follow it\n6. Owner: Paul, Vietnamese, non-programmer, PST</pre-compact-hook>'"
+            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — MANDATORY ACTIONS:\n1. Save feedback/learnings to memory files NOW\n2. Save current task state (done/remaining) to memory\n3. List ALL files you were editing (paths)\n4. After compaction: post-compact.sh will fire — read ALL files it tells you\n5. post-compact.sh will re-inject enforce.md directly before you continue\n6. Owner: Paul, Vietnamese, non-programmer, PST</pre-compact-hook>'"
           }
         ]
       }
@@ -107,17 +123,18 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash -c '\"/home/paul/.bun/bin/bun\" \"$(ls -td /home/paul/.claude/plugins/cache/claude-ultimate-hud/claude-ultimate-hud/*/ 2>/dev/null | head -1 || ls -d /home/paul/.claude/plugins/claude-ultimate-hud/ 2>/dev/null)src/index.ts\"'"
+    "command": "bash -c 'PLUGIN_DIR=$(ls -td /home/paul/.claude/plugins/cache/claude-ultimate-hud/claude-ultimate-hud/*/ 2>/dev/null | head -1); [ -n \"$PLUGIN_DIR\" ] || exit 0; exec \"/home/paul/.bun/bin/bun\" \"${PLUGIN_DIR%/}/dist/index.js\"'"
   },
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
     "frontend-design@claude-code-plugins": true,
-    "learning-output-style@claude-code-plugins": true,
+    "learning-output-style@claude-code-plugins": false,
     "claude-ultimate-hud@claude-ultimate-hud": true,
     "superpowers@superpowers-dev": true,
     "security-guidance@claude-code-plugins": true,
     "code-review@claude-code-plugins": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "vtsls@claude-code-lsps": true
   },
   "extraKnownMarketplaces": {
     "everything-claude-code": {
@@ -161,16 +178,16 @@
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
-      "Hallucinating responsibly",
-      "Pretending to think",
-      "Confidently guessing",
-      "Blaming the context window",
-      "Consulting my imagination",
-      "Speedrunning your tech debt",
-      "Overthinking this",
-      "Apologizing in advance",
-      "Vibing with your codebase",
-      "Submitting my best guess"
+      "Reviewing files",
+      "Planning changes",
+      "Running checks",
+      "Verifying output",
+      "Analyzing diff",
+      "Inspecting codebase",
+      "Checking assumptions",
+      "Routing subtasks",
+      "Running validators",
+      "Preparing answer"
     ]
   },
   "voiceEnabled": false,

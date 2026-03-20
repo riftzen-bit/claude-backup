@@ -33,11 +33,13 @@
       "provider": "google",
       "cost_tier": 2,
       "dispatch": "cli",
-      "cli_command": "gemini -m gemini-3.1-pro-preview --sandbox false",
+      "cli_command": "gemini -m gemini-3.1-pro-preview --sandbox false --approval-mode auto_edit",
       "timeout": 180,
       "strengths": ["frontend-design", "ui-components", "css", "visual-layout", "animations", "responsive-design", "color-theory"],
       "weaknesses": ["backend-logic", "system-architecture"],
       "auto_detect_keywords": ["design", "redesign", "style", "styling", "UI", "UX", "layout", "CSS", "Tailwind", "animation", "theme", "color", "typography", "font", "landing page", "component visual", "responsive"],
+      "requires_explicit_user_opt_in": true,
+      "auto_detect": false,
       "require_opus_review": true,
       "design_command": "/design"
     }
@@ -94,10 +96,10 @@
     },
     {
       "task_pattern": "frontend_design",
-      "description": "UI component design, styling, CSS, visual layout, animations, theming, typography",
+      "description": "UI component design, styling, CSS, visual layout, animations, theming, typography — only after explicit user opt-in",
       "model": "gemini",
       "dispatch_method": "cli_no_sandbox",
-      "auto_detect": true,
+      "auto_detect": false,
       "examples": ["design login page", "style this component", "add animations", "responsive layout", "create landing page", "redesign the navbar", "update color scheme", "add dark mode", "make it look modern"]
     },
     {
@@ -121,7 +123,7 @@
     {
       "task_pattern": "planning",
       "description": "Project planning, requirement analysis, trade-off evaluation",
-      "model": "opus",
+      "model": "sonnet",
       "examples": ["plan this feature", "evaluate options", "design API contract"]
     }
   ],

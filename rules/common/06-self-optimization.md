@@ -22,11 +22,11 @@ When user corrects approach:
 
 - Global CLAUDE.md <50 lines, project <150 lines
 - Total rules <600 lines
-- No duplicates across files
+- No accidental duplicate inventories or stale counts across files
 - Always-loaded config <15% of context window
 
 ## Anti-Degradation
 
 - Every rule: concrete, verifiable, actionable
 - Every line must pass: "Would removing this cause specific mistakes?"
-- No duplicates — one source of truth per concept
+- Policy may be intentionally reinforced in `CLAUDE.md`, `enforce.md`, hooks, and skills; inventories/counts should keep one source of truth

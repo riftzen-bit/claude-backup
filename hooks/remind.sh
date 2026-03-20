@@ -1,32 +1,33 @@
 #!/bin/bash
-# UserPromptSubmit hook — HARD injection of enforce.md into EVERY message
-# This is the primary enforcement mechanism. Cannot be skipped.
-
-# Skip when running from TeleClaude
-[ "$TELECLAUDE" = "1" ] && exit 0
+# UserPromptSubmit hook — inject enforce.md into every message exactly as written
 
 ENFORCE_FILE="/home/paul/.claude/enforce.md"
 
-# Read enforce.md and wrap in XML enforcement tags
 if [ -f "$ENFORCE_FILE" ]; then
-  echo "<mandatory-enforcement>"
   cat "$ENFORCE_FILE"
-  echo ""
-  echo "ACKNOWLEDGE: You MUST follow ALL rules above before responding."
-  echo "Start response with [ENFORCED] to confirm injection received."
-  echo "</mandatory-enforcement>"
 else
-  # Fallback if enforce.md missing — inline critical rules
   cat <<'EOF'
-<mandatory-enforcement>
-CRITICAL: enforce.md missing. Minimal enforcement active:
-1. Read files BEFORE editing — never edit blind
-2. Vietnamese conversation, English code
-3. Never claim done without verification
-4. Never add AI attribution
-5. Never fabricate — search when unsure
-6. TDD: RED → GREEN → REFACTOR
-Start response with [ENFORCED] to confirm.
-</mandatory-enforcement>
+<user-prompt-submit-hook>
+BEFORE responding:
+1. If editing a file: re-read it first (memory degrades after 5+ tool calls)
+2. If claiming "done/fixed": run verification (build/test/lint) and show actual output
+3. If unsure about code: read the actual file, don't guess from memory
+4. Answer directly — no filler, no restating the question
+5. Trust filesystem over conversation memory
+
+MANDATORY ENGINEERING MINDSET (every message):
+- Fully understand the codebase before writing code
+- Think like a world-class engineer: analyze options, critique, propose plan, wait for approval
+- Ask clarifying questions instead of assuming
+
+MANDATORY AUTOMATION CHECKLIST:
+- BEFORE complex features: use Spec Mode (Shift+Tab) to plan first
+- BEFORE coding: TDD — write failing test FIRST, then implement
+- AFTER writing code: dispatch code-reviewer droid automatically
+- BEFORE commits: dispatch security-reviewer droid automatically
+- BEFORE claiming done: run build/typecheck/lint/tests AND show actual output
+- WHEN delegating to droids: include TDD rules and verification in every prompt
+- Paul is non-programmer — handle everything end-to-end, never skip quality gates
+</user-prompt-submit-hook>
 EOF
 fi

@@ -28,4 +28,3 @@ paths:
 ## Testing
 - Vitest preferred for unit tests (detect from project config)
 - Playwright for E2E testing of critical user flows
-- Use `e2e-runner` agent for E2E test generation/maintenance
