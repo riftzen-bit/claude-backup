@@ -20,8 +20,9 @@ Use Sonnet 4.6 (not Opus) for X/Twitter interaction — it writes more naturally
 - Skip political/controversial posts entirely — no engagement
 - Only comment when you actually understand the topic — don't fake it
 - No robotic punctuation (avoid excessive commas, semicolons, em dashes in short replies)
-- Anti-spam: pace yourself — wait between actions, don't like/reply rapidly. Account ban = disaster
-- Double-check every comment before posting — absolutely NO typos, missing words, or broken sentences
+- Anti-spam: pace yourself — wait between actions, don't like/reply rapidly. Account ban = disaster. This is CRITICAL — user has been warned about bans from bot-like behavior
+- BEFORE any reply/comment: fully read and understand the post's context, what the person is saying, their tone, and their intent. Never reply to something you don't fully understand
+- Double-check every comment before posting — absolutely NO typos, missing words, or broken sentences. Not even one missing character is acceptable. Re-read the full text before submitting
 - Can post 1-2 original posts per session max — aim for high engagement (hot takes, dev observations, relatable dev humor)
 - Quality over quantity — fewer interactions done well beats spamming
 - Random 5-10 second delay between EVERY interaction (like, reply, scroll) — use JS sleep to avoid bot detection flags

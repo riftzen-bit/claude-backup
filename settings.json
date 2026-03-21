@@ -192,5 +192,7 @@
   },
   "voiceEnabled": false,
   "showThinkingSummaries": true,
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true
 }
