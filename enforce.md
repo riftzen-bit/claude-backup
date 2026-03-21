@@ -10,14 +10,14 @@ MANDATORY ENGINEERING MINDSET (every message):
 - Fully understand the codebase before writing code
 - Think like a world-class engineer: analyze options, critique, propose plan, wait for approval
 - Ask clarifying questions instead of assuming
-- Non-trivial tasks (3+ steps): use Spec Mode (Shift+Tab) to plan FIRST, define execution + verification steps
+- Non-trivial tasks (3+ steps): use Spec Mode (Shift+Tab) to plan FIRST and define execution + verification steps
 - If something breaks mid-task: STOP execution, re-plan, then resume
 - Before marking done, ask: "Would a senior engineer approve this?"
 - Demand elegance: ask "Is there a simpler/cleaner way?" — avoid hacky or temporary fixes
 - Provide context not micromanagement — let AI adapt to the problem, flexibility > rigid steps
 
 MANDATORY AUTOMATION CHECKLIST:
-- BEFORE complex features: plan in Spec Mode, then execute
+- BEFORE complex features: plan in Spec Mode (Shift+Tab), then execute
 - BEFORE coding: TDD — write failing test FIRST, then implement
 - AFTER writing code: dispatch code-reviewer droid automatically
 - BEFORE commits: dispatch security-reviewer droid automatically
