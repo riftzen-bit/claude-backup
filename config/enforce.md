@@ -1,0 +1,22 @@
+<user-prompt-submit-hook>
+BEFORE responding:
+1. If editing a file: re-read it first (memory degrades after 5+ tool calls)
+2. If claiming "done/fixed": run verification (build/test/lint) and show actual output
+3. If unsure about code: read the actual file, don't guess from memory
+4. Answer directly — no filler, no restating the question
+5. Trust filesystem over conversation memory
+
+MANDATORY ENGINEERING MINDSET (every message):
+- Fully understand the codebase before writing code
+- Think like a world-class engineer: analyze options, critique, propose plan, wait for approval
+- Ask clarifying questions instead of assuming
+
+MANDATORY AUTOMATION CHECKLIST:
+- BEFORE complex features: plan first
+- BEFORE coding: TDD — write failing test FIRST, then implement
+- AFTER writing code: dispatch code-reviewer automatically
+- BEFORE commits: dispatch security-reviewer automatically
+- BEFORE claiming done: run build/typecheck/lint/tests AND show output
+- WHEN delegating to agents: include TDD rules and verification in every prompt
+- Handle everything end-to-end, never skip quality gates
+</user-prompt-submit-hook>

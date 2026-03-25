@@ -1,0 +1,265 @@
+name: CI — Cross-Platform Validation
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  validate-config:
+    name: Validate Config Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JSON validity
+        run: |
+          python3 -m json.tool config/settings.json > /dev/null
+          echo "✓ settings.json"
+          python3 -m json.tool config/model-routing.json > /dev/null
+          echo "✓ model-routing.json"
+
+      - name: Bash syntax — all hooks
+        run: |
+          failed=0
+          for f in config/hooks/*.sh; do
+            if bash -n "$f" 2>&1; then
+              echo "✓ $(basename $f)"
+            else
+              echo "✗ $(basename $f)"
+              failed=1
+            fi
+          done
+          exit $failed
+
+      - name: Python syntax — benchmark embedded code
+        run: |
+          sed -n '/^python3 - <<.PY.$/,/^PY$/p' config/commands/benchmark.md | sed '1d;$d' > /tmp/bench.py
+          python3 -c "import ast; ast.parse(open('/tmp/bench.py').read())"
+          echo "✓ benchmark.py valid Python"
+
+      - name: No hardcoded personal paths
+        run: |
+          if grep -rn "/home/paul\|/Users/paul\|-home-paul" config/ 2>/dev/null; then
+            echo "✗ Found hardcoded personal paths"
+            exit 1
+          fi
+          echo "✓ No personal paths"
+
+      - name: No bash 4+ only features
+        run: |
+          if grep -rn '${[^}]*,,\|${[^}]*\^\^' config/hooks/ 2>/dev/null; then
+            echo "✗ Found bash 4+ case conversion syntax"
+            exit 1
+          fi
+          echo "✓ Bash 3.2 compatible"
+
+      - name: No GNU-only sed -i
+        run: |
+          if grep -rn 'sed -i ' config/ install.sh README.md 2>/dev/null; then
+            echo "✗ Found GNU-only sed -i"
+            exit 1
+          fi
+          echo "✓ Portable sed usage"
+
+      - name: Agent frontmatter completeness
+        run: |
+          failed=0
+          for f in config/agents/*.md; do
+            name=$(basename "$f" .md)
+            for field in name description model tools max_turns; do
+              if ! grep -q "^${field}:" "$f"; then
+                echo "✗ $name missing $field"
+                failed=1
+              fi
+            done
+            [ $failed -eq 0 ] && echo "✓ $name"
+          done
+          exit $failed
+
+      - name: Command frontmatter
+        run: |
+          failed=0
+          for f in config/commands/*.md; do
+            name=$(basename "$f" .md)
+            if ! head -1 "$f" | grep -q "^---"; then
+              echo "✗ $name missing frontmatter"
+              failed=1
+            fi
+            if ! grep -q "^name:" "$f"; then
+              echo "✗ $name missing name field"
+              failed=1
+            fi
+            [ $failed -eq 0 ] && echo "✓ $name"
+          done
+          exit $failed
+
+      - name: Skill SKILL.md existence
+        run: |
+          failed=0
+          for d in config/skills/*/; do
+            name=$(basename "$d")
+            if [ ! -f "$d/SKILL.md" ]; then
+              echo "✗ $name missing SKILL.md"
+              failed=1
+            else
+              echo "✓ $name"
+            fi
+          done
+          exit $failed
+
+      - name: Rules line budget
+        run: |
+          total=$(cat config/rules/common/*.md config/rules/typescript/*.md | wc -l)
+          echo "Total rules lines: $total / 600"
+          if [ "$total" -gt 600 ]; then
+            echo "✗ Over budget"
+            exit 1
+          fi
+          echo "✓ Under budget"
+
+      - name: Settings.json placeholder check
+        run: |
+          count=$(grep -c "__HOME__" config/settings.json)
+          echo "__HOME__ placeholders: $count"
+          if [ "$count" -eq 0 ]; then
+            echo "✗ No __HOME__ placeholders"
+            exit 1
+          fi
+          echo "✓ Placeholders present"
+
+  install-linux:
+    name: Install Test — Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run install.sh
+        run: |
+          chmod +x install.sh
+          echo "y" | ./install.sh
+
+      - name: Verify installation
+        run: |
+          if grep -q "__HOME__" ~/.claude/settings.json; then
+            echo "✗ __HOME__ not replaced"; exit 1
+          fi
+          echo "✓ Paths replaced"
+          for f in ~/.claude/hooks/*.sh; do
+            if [ ! -x "$f" ]; then
+              echo "✗ $(basename $f) not executable"; exit 1
+            fi
+          done
+          echo "✓ All hooks executable"
+          python3 -m json.tool ~/.claude/settings.json > /dev/null
+          echo "✓ settings.json valid"
+          count=$(find ~/.claude -type f | wc -l)
+          echo "✓ $count files installed"
+
+      - name: Test hooks with sample data
+        run: |
+          echo '{"tool_name":"Edit","file_path":"test.ts"}' | ~/.claude/hooks/pre-write-guard.sh | grep -q "pre-write-guard"
+          echo "✓ pre-write-guard.sh"
+          echo '{"tool_name":"Edit","file_path":"test.ts"}' | ~/.claude/hooks/post-tool.sh | grep -q "post-edit-review"
+          echo "✓ post-tool.sh"
+          echo '{"tool_name":"Bash","command":"npm install","output":"Cannot find module fake-pkg"}' | ~/.claude/hooks/post-tool.sh | grep -q "hallucination-warning"
+          echo "✓ hallucination guard"
+          ~/.claude/hooks/remind.sh < /dev/null | grep -q "user-prompt-submit-hook"
+          echo "✓ remind.sh"
+          ~/.claude/hooks/session-start.sh < /dev/null | grep -q "session-init"
+          echo "✓ session-start.sh"
+          echo "" | ~/.claude/hooks/pre-write-guard.sh
+          echo "✓ empty stdin handled"
+
+  install-macos:
+    name: Install Test — macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run install.sh
+        run: |
+          chmod +x install.sh
+          echo "y" | ./install.sh
+
+      - name: Verify installation
+        run: |
+          if grep -q "__HOME__" ~/.claude/settings.json; then
+            echo "✗ __HOME__ not replaced"; exit 1
+          fi
+          echo "✓ Paths replaced"
+          for f in ~/.claude/hooks/*.sh; do
+            if [ ! -x "$f" ]; then
+              echo "✗ $(basename $f) not executable"; exit 1
+            fi
+          done
+          echo "✓ All hooks executable"
+          python3 -m json.tool ~/.claude/settings.json > /dev/null
+          echo "✓ settings.json valid"
+
+      - name: Test hooks on macOS bash
+        run: |
+          echo "Bash version: $BASH_VERSION"
+          echo '{"tool_name":"Edit","file_path":"test.ts"}' | ~/.claude/hooks/pre-write-guard.sh | grep -q "pre-write-guard"
+          echo "✓ pre-write-guard.sh on macOS"
+          echo '{"tool_name":"Edit","file_path":"test.ts"}' | ~/.claude/hooks/post-tool.sh | grep -q "post-edit-review"
+          echo "✓ post-tool.sh on macOS"
+          echo '{"tool_name":"Bash","command":"npm install","output":"Cannot find module fake-pkg"}' | ~/.claude/hooks/post-tool.sh | grep -q "hallucination-warning"
+          echo "✓ hallucination guard on macOS"
+          ~/.claude/hooks/remind.sh < /dev/null | grep -q "user-prompt-submit-hook"
+          echo "✓ remind.sh on macOS"
+
+  install-windows:
+    name: Install Test — Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run install.ps1
+        shell: pwsh
+        run: |
+          .\install.ps1
+
+      - name: Verify installation
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:USERPROFILE ".claude"
+          $settingsPath = Join-Path $target "settings.json"
+          if (!(Test-Path $settingsPath)) {
+            Write-Error "settings.json not found"; exit 1
+          }
+          $null = Get-Content $settingsPath | ConvertFrom-Json
+          Write-Host "✓ settings.json valid JSON"
+          $content = Get-Content $settingsPath -Raw
+          if ($content -match "__HOME__") {
+            Write-Error "__HOME__ not replaced"; exit 1
+          }
+          Write-Host "✓ Paths replaced"
+          $hookCount = (Get-ChildItem (Join-Path $target "hooks\*.sh")).Count
+          if ($hookCount -ne 9) {
+            Write-Error "Expected 9 hooks, found $hookCount"; exit 1
+          }
+          Write-Host "✓ $hookCount hook scripts"
+          $agentCount = (Get-ChildItem (Join-Path $target "agents\*.md")).Count
+          Write-Host "✓ $agentCount agents"
+          $ruleCount = (Get-ChildItem (Join-Path $target "rules") -Recurse -Filter "*.md").Count
+          Write-Host "✓ $ruleCount rules"
+          $skillCount = (Get-ChildItem (Join-Path $target "skills") -Directory).Count
+          Write-Host "✓ $skillCount skills"
+          $totalFiles = (Get-ChildItem $target -Recurse -File).Count
+          Write-Host "✓ $totalFiles total files"
+
+      - name: Test hooks via Git Bash
+        shell: bash
+        run: |
+          echo "Bash version: $BASH_VERSION"
+          CLAUDE_DIR="$USERPROFILE/.claude"
+          CLAUDE_DIR=$(echo "$CLAUDE_DIR" | tr '\\' '/')
+          for f in "$CLAUDE_DIR"/hooks/*.sh; do
+            bash -n "$f" && echo "✓ $(basename $f) syntax" || echo "✗ $(basename $f)"
+          done
+          HOME="$USERPROFILE" "$CLAUDE_DIR/hooks/remind.sh" < /dev/null | grep -q "user-prompt-submit-hook"
+          echo "✓ remind.sh on Windows Git Bash"
+          echo '{"tool_name":"Edit","file_path":"test.ts"}' | "$CLAUDE_DIR/hooks/pre-write-guard.sh" | grep -q "pre-write-guard"
+          echo "✓ pre-write-guard.sh on Windows Git Bash"
