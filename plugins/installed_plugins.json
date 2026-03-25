@@ -130,6 +130,26 @@
         "lastUpdated": "2026-03-18T21:13:29.975Z",
         "gitCommitSha": "6b70f99f769f58b9b642dc8a271936b17862cf8c"
       }
+    ],
+    "ralph-loop@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-plugins-official/ralph-loop/9e07d065e37b",
+        "version": "9e07d065e37b",
+        "installedAt": "2026-03-23T22:50:26.997Z",
+        "lastUpdated": "2026-03-25T16:08:58.254Z",
+        "gitCommitSha": "15268f03d2f560b955584a283927ed175569678c"
+      }
+    ],
+    "parallel-agents@parallel-agents-local": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/parallel-agents-local/parallel-agents/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-24T22:21:16.266Z",
+        "lastUpdated": "2026-03-24T22:21:16.266Z",
+        "gitCommitSha": "9180917b62607131d475aca12a88536d67e5fb18"
+      }
     ]
   }
 }

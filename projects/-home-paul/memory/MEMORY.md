@@ -25,16 +25,21 @@
 
 ## Active Projects
 - [Model Routing Plugin](project_model_routing.md) — Phase 5 partially delivered
+- [Parallel Agents Plugin](project_parallel_agents.md) — v1.0.0 installed, tested, ready for GitHub
 
-## Config Overview (updated 2026-03-20, iteration 7)
+## Config Overview (updated 2026-03-25, iteration 9)
 - Global CLAUDE.md: concise routing + execution policy hub
-- Enforcement: `UserPromptSubmit` injects the exact `user-prompt-submit-hook` block from `enforce.md` on every user message
-- Rules: `common/00-07` + `typescript/` — keep policy reinforcement intentional, avoid manual count drift
+- Enforcement: OmO-style injection at every touchpoint — `remind.sh` (per-message: enforce + agents + routing + delegation + cross-tool + project + git), `pre-write-guard.sh` (per-tool: discipline for read, full guard for mutate, routing for agent), `post-tool.sh` (per-tool: review for edit, hallucination for bash, verify for agent)
+- Rules: `common/00-08` + `typescript/` — 08 = agent discipline (structured delegation, intent classification, cross-tool rules)
 - Hooks: 7 event keys / 11 actions — `remind.sh`, `pre-write-guard.sh`, `post-tool.sh`, `notify.sh`, `pre-agent-routing.sh`, `session-start.sh`, `post-compact.sh`, `subagent-stop.sh`, `ecc-observe.sh`, plus inline `PreCompact` and `Stop`
+- Auto-cleanup: session-start.sh auto-purges stale session IDs (7d), routing logs (14d), security state files, cross-rules cache (1d), plugin .sh permissions (workaround #20432)
 - Commands: `/route`, `/design`, `/routing-stats`, `/self-optimize`, `/benchmark`
-- Enabled plugins (8): everything-claude-code, frontend-design, code-review, superpowers, security-guidance, claude-ultimate-hud, typescript-lsp, vtsls
+- Enabled plugins (10): everything-claude-code, frontend-design, code-review, superpowers, security-guidance, claude-ultimate-hud, typescript-lsp, vtsls, parallel-agents, ralph-loop
 - Learning plugin disabled: it conflicted with Paul's end-to-end workflow and added token-heavy teaching prompts
 - ECC observe disabled by default: requires explicit opt-in and a pinned observer path
 - Agents: repo-scout, planner, code-reviewer, validator, security-reviewer, open-source-librarian, media-interpreter
-- Skills: auto = execution-guard, anti-ai-design, vercel-react-best-practices, planning-with-files; manual = web-design-guidelines, skill-factory, text-to-speech
+- Skills (66 total): core auto = execution-guard, anti-ai-design, vercel-react-best-practices, planning-with-files; manual = web-design-guidelines, skill-factory, text-to-speech; Anthropic official = pdf, docx, xlsx, pptx, doc-coauthoring, canvas-design, web-artifacts-builder, brand-guidelines, algorithmic-art, theme-factory, mcp-builder, webapp-testing; community = deep-research; marketing (33 skills from coreyhaines31); SEO (13 skills from AgriciDaniel)
+- Doc tools venv: `/home/paul/.local/share/doc-tools/` (pypdf, markitdown); system: pandoc 3.5, LibreOffice 26.2
+- Env: `CLAUDE_CODE_NEW_INIT=1` enabled (experimental /init for new projects)
 - OpenCode: AGENTS.md + enforce.md + rules via instructions array
+- [OmO patterns adapted](reference_omo_patterns.md) — structured delegation, intent classification, cross-tool rules, search discipline from Oh My OpenAgent

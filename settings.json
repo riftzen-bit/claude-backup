@@ -3,8 +3,14 @@
     "MAX_THINKING_TOKENS": "31999",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_ENABLE_ECC_OBSERVE": "0"
+    "CLAUDE_ENABLE_ECC_OBSERVE": "0",
+    "CLAUDE_CODE_NEW_INIT": "1"
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeCoAuthoredBy": false,
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -134,9 +140,17 @@
     "security-guidance@claude-code-plugins": true,
     "code-review@claude-code-plugins": true,
     "typescript-lsp@claude-plugins-official": true,
-    "vtsls@claude-code-lsps": true
+    "vtsls@claude-code-lsps": true,
+    "ralph-loop@claude-plugins-official": true,
+    "parallel-agents@parallel-agents-local": true
   },
   "extraKnownMarketplaces": {
+    "parallel-agents-local": {
+      "source": {
+        "source": "git",
+        "url": "file:///home/paul/parallel-agents"
+      }
+    },
     "everything-claude-code": {
       "source": {
         "source": "github",
@@ -190,9 +204,9 @@
       "Preparing answer"
     ]
   },
-  "voiceEnabled": false,
-  "showThinkingSummaries": true,
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "voiceEnabled": false,
+  "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true
 }

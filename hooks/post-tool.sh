@@ -1,5 +1,5 @@
 #!/bin/bash
-# Combined PostToolUse hook: post-edit review + UI reminder + package hallucination guard
+# PostToolUse hook — inject review/discipline after EVERY tool call
 
 INPUT_JSON=$(cat)
 PYTHON_CODE=$(cat <<'PY'
@@ -73,7 +73,7 @@ if [ "$CLAUDE_ENABLE_ECC_OBSERVE" = "1" ]; then
   echo "$INPUT_JSON" | /home/paul/.claude/hooks/ecc-observe.sh post >/dev/null 2>&1 &
 fi
 
-# Check ApplyPatch/Edit/Write/MultiEdit/NotebookEdit
+# ── EDIT TOOLS: full review ──
 if [[ "$TOOL_NAME" == "ApplyPatch" ]] || \
    [[ "$TOOL_NAME" == "Edit" ]] || \
    [[ "$TOOL_NAME" == "MultiEdit" ]] || \
@@ -82,11 +82,12 @@ if [[ "$TOOL_NAME" == "ApplyPatch" ]] || \
 
   cat <<'EOF'
 <post-edit-review>
-You just modified a file. Review your own change:
-- Re-read the edited file to verify correctness
-- Check for typos, logic errors, missing imports
-- Confirm you know the repo's validator commands before claiming completion
-- Would a senior engineer approve this diff?
+File modified — mandatory review:
+1. Re-read the edited file to verify correctness
+2. Check for typos, logic errors, missing imports
+3. Run repo validators before claiming completion
+4. Dispatch code-reviewer(sonnet) after all edits done
+5. Dispatch security-reviewer(opus) before any commit
 </post-edit-review>
 EOF
 
@@ -97,21 +98,18 @@ EOF
      [[ "$INPUT_JSON" == *'.html"'* ]]; then
     cat <<'EOF'
 <post-ui-change>
-UI file modified. Visually verify with Playwright screenshot.
+UI file modified — visually verify with Playwright screenshot before claiming done.
 </post-ui-change>
 EOF
   fi
 
-# Check Bash for hallucinated packages
+# ── BASH: mutating + hallucination guard ──
 elif [[ "$TOOL_NAME" == "Bash" ]]; then
 
   if [[ "$MUTATING_BASH" == "true" ]]; then
     cat <<'EOF'
 <post-bash-write-review>
-This Bash command may have changed files.
-- Re-read any affected files
-- Run the relevant validators before claiming completion
-- If UI files changed, verify visually
+Bash modified files — re-read affected files and run validators before completion.
 </post-bash-write-review>
 EOF
   fi
@@ -126,10 +124,18 @@ EOF
      [[ "${INPUT_JSON,,}" == *"package not found"* ]]; then
     cat <<'EOF'
 <hallucination-warning>
-Package/module not found. This may be a hallucinated package name.
-Verify the package exists: check npm/PyPI/crates.io before retrying.
+Package/module not found — likely hallucinated name. Verify on npm/PyPI/crates.io before retrying.
 </hallucination-warning>
 EOF
   fi
+
+# ── AGENT: completion check ──
+elif [[ "$TOOL_NAME" == "Agent" ]]; then
+  cat <<'EOF'
+<post-agent-review>
+Subagent completed — verify its output before trusting. Check files it claims to have modified.
+</post-agent-review>
+EOF
 fi
+
 exit 0

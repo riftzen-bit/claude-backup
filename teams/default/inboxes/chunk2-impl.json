@@ -1,0 +1,9 @@
+[
+  {
+    "from": "team-lead",
+    "text": "The spec reviewer found issues with the tests. The plan specifies 4 UNIT tests that test a pure `diff_ports` function defined INLINE in the test file — not integration tests against real OS.\n\nFix `src-tauri/tests/scanner_test.rs`:\n\n1. Define a pure `diff_ports` function inline in the test file (takes prev HashMap and curr slice, returns added/removed/conflicts vectors)\n2. Write these 4 deterministic tests:\n   - `test_diff_detects_new_port`: empty prev + [(3000, 1234)] curr → added = [(3000, 1234)], removed empty, conflicts empty\n   - `test_diff_detects_removed_port`: prev has (3000, 1234) + empty curr → removed = [(3000, 1234)], added empty  \n   - `test_diff_detects_conflict`: empty prev + [(4200, 1000), (4200, 2000)] → conflicts = [4200]\n   - `test_diff_detects_multiple_conflicts_sorted`: [(8080, 10), (8080, 20), (3000, 30), (3000, 40)] → conflicts = [3000, 8080] (sorted)\n3. Sort outputs from HashMap before asserting (HashMap order is non-deterministic)\n4. You can keep existing integration tests if they add value, but the 4 unit tests above are REQUIRED\n5. Run `cargo test --test scanner_test` to verify all pass\n6. Commit the fix",
+    "summary": "Fix tests to match spec requirements",
+    "timestamp": "2026-03-21T14:03:01.299Z",
+    "read": false
+  }
+]

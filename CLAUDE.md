@@ -11,10 +11,11 @@ Read before action:
 2. `~/.claude/enforce.md`
 3. `~/.claude/rules/common/` and `~/.claude/rules/typescript/`
 4. In a repo: project `README`/`CLAUDE.md` plus build/test config and recent `git log`
+5. Cross-tool files if detected: `.cursor/rules/`, `.github/copilot-instructions.md`, `AGENTS.md`, `.windsurfrules`
 
 ## Specialists
-- `repo-scout` (haiku): file discovery, convention matching, validator discovery
-- `planner` (sonnet): scoped plans, risks, missing questions, validation plan
+- `repo-scout` (haiku): file discovery, convention matching, validator discovery, cross-tool rules
+- `planner` (sonnet): intent classification, scoped plans, risks, validation plan
 - `code-reviewer` (sonnet): review changed files/diffs after edits
 - `validator` (sonnet): run build/typecheck/lint/tests with exact evidence
 - `security-reviewer` (opus): review pending changes for secrets, unsafe defaults, and commit-time risks

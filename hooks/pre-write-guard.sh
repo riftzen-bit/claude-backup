@@ -1,5 +1,6 @@
 #!/bin/bash
-# PreToolUse hook for mutating tools — remind before edits/writes happen
+# PreToolUse hook — inject discipline on EVERY tool call
+# Light reminder for read-only tools, full guard for mutating tools
 
 INPUT_JSON=$(cat)
 PYTHON_CODE=$(cat <<'PY'
@@ -80,23 +81,48 @@ is_mutating_bash() {
   [[ "$MUTATING_BASH" == "true" ]]
 }
 
+# ── MUTATING TOOLS: full guard ──
 if is_edit_tool; then
   cat <<'EOF'
 <pre-write-guard>
-Before editing:
-- Re-read the target file first
-- If behavior or acceptance criteria are unclear, ask before changing code
-- If the repo has tests, start with a failing test before implementation
+STOP — before editing:
+1. Re-read the target file first (memory degrades after 5+ tool calls)
+2. If behavior or acceptance criteria are unclear, ask before changing code
+3. If the repo has tests, write a failing test FIRST (TDD)
+4. Match existing code style, naming, and patterns
+5. No @ts-ignore, no eslint-disable, no type:ignore
+Routing: delegate review to code-reviewer(sonnet) after edit, security-reviewer(opus) before commit.
 </pre-write-guard>
 EOF
 elif is_mutating_bash; then
   cat <<'EOF'
 <pre-bash-write-guard>
-This Bash command appears to modify files.
-- Confirm the command is scoped to the intended files only
-- Prefer precise file tools when possible
-- Re-read affected files and run validators after the write completes
+STOP — this Bash command modifies files:
+1. Confirm the command is scoped to intended files only
+2. Prefer precise file tools (Edit/Write) when possible
+3. Re-read affected files and run validators after completion
+4. If installing packages: verify they exist first (hallucination guard)
 </pre-bash-write-guard>
+EOF
+
+# ── AGENT DISPATCH: routing reminder ──
+elif [[ "$TOOL_NAME" == "Agent" ]]; then
+  cat <<'EOF'
+<pre-agent-guard>
+Delegation checklist:
+1. MODEL: haiku(search) | sonnet(plan/review/validate) | opus(architecture/security)
+2. PROMPT: TASK + EXPECTED OUTCOME + SCOPE + CONTEXT
+3. COLLISION: no file overlap with parallel agents
+4. ISOLATION: worktree for parallel dispatches
+</pre-agent-guard>
+EOF
+
+# ── ALL OTHER TOOLS: lightweight reminder ──
+else
+  cat <<'EOF'
+<tool-discipline>
+Trust filesystem over memory. Re-read if >5 tool calls since last read. No fabricated paths/APIs.
+</tool-discipline>
 EOF
 fi
 
