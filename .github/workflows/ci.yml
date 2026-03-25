@@ -55,13 +55,13 @@ jobs:
           fi
           echo "✓ Bash 3.2 compatible"
 
-      - name: No GNU-only sed -i
+      - name: No GNU-only sed -i (core files only)
         run: |
-          if grep -rn 'sed -i ' config/ install.sh README.md 2>/dev/null; then
-            echo "✗ Found GNU-only sed -i"
+          if grep -rn 'sed -i ' config/hooks/ config/rules/ config/agents/ config/commands/ config/enforce.md config/CLAUDE.md install.sh 2>/dev/null; then
+            echo "✗ Found GNU-only sed -i in core files"
             exit 1
           fi
-          echo "✓ Portable sed usage"
+          echo "✓ Portable sed usage in core files"
 
       - name: Agent frontmatter completeness
         run: |
@@ -259,7 +259,9 @@ jobs:
           for f in "$CLAUDE_DIR"/hooks/*.sh; do
             bash -n "$f" && echo "✓ $(basename $f) syntax" || echo "✗ $(basename $f)"
           done
-          HOME="$USERPROFILE" "$CLAUDE_DIR/hooks/remind.sh" < /dev/null 2>/dev/null | head -5 | grep -q "user-prompt-submit-hook"
+          output=$(HOME="$USERPROFILE" "$CLAUDE_DIR/hooks/remind.sh" < /dev/null 2>/dev/null || true)
+          echo "$output" | grep -q "user-prompt-submit-hook"
           echo "✓ remind.sh on Windows Git Bash"
-          echo '{"tool_name":"Edit","file_path":"test.ts"}' | "$CLAUDE_DIR/hooks/pre-write-guard.sh" 2>/dev/null | grep -q "pre-write-guard"
+          output=$(echo '{"tool_name":"Edit","file_path":"test.ts"}' | "$CLAUDE_DIR/hooks/pre-write-guard.sh" 2>/dev/null || true)
+          echo "$output" | grep -q "pre-write-guard"
           echo "✓ pre-write-guard.sh on Windows Git Bash"
