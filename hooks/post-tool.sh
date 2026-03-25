@@ -114,14 +114,15 @@ Bash modified files — re-read affected files and run validators before complet
 EOF
   fi
 
-  if [[ "${INPUT_JSON,,}" == *"module not found"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"not found in registry"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"404 not found"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"err_module_not_found"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"no matching version"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"cannot find module"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"no such package"* ]] || \
-     [[ "${INPUT_JSON,,}" == *"package not found"* ]]; then
+  INPUT_LOWER=$(printf '%s' "$INPUT_JSON" | tr '[:upper:]' '[:lower:]')
+  if [[ "$INPUT_LOWER" == *"module not found"* ]] || \
+     [[ "$INPUT_LOWER" == *"not found in registry"* ]] || \
+     [[ "$INPUT_LOWER" == *"404 not found"* ]] || \
+     [[ "$INPUT_LOWER" == *"err_module_not_found"* ]] || \
+     [[ "$INPUT_LOWER" == *"no matching version"* ]] || \
+     [[ "$INPUT_LOWER" == *"cannot find module"* ]] || \
+     [[ "$INPUT_LOWER" == *"no such package"* ]] || \
+     [[ "$INPUT_LOWER" == *"package not found"* ]]; then
     cat <<'EOF'
 <hallucination-warning>
 Package/module not found — likely hallucinated name. Verify on npm/PyPI/crates.io before retrying.

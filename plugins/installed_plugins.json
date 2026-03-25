@@ -134,10 +134,10 @@
     "ralph-loop@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/home/paul/.claude/plugins/cache/claude-plugins-official/ralph-loop/9e07d065e37b",
-        "version": "9e07d065e37b",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-plugins-official/ralph-loop/6722ef81fc24",
+        "version": "6722ef81fc24",
         "installedAt": "2026-03-23T22:50:26.997Z",
-        "lastUpdated": "2026-03-25T16:08:58.254Z",
+        "lastUpdated": "2026-03-25T21:38:30.762Z",
         "gitCommitSha": "15268f03d2f560b955584a283927ed175569678c"
       }
     ],
