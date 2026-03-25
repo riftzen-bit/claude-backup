@@ -259,7 +259,7 @@ jobs:
           for f in "$CLAUDE_DIR"/hooks/*.sh; do
             bash -n "$f" && echo "✓ $(basename $f) syntax" || echo "✗ $(basename $f)"
           done
-          HOME="$USERPROFILE" "$CLAUDE_DIR/hooks/remind.sh" < /dev/null | grep -q "user-prompt-submit-hook"
+          HOME="$USERPROFILE" "$CLAUDE_DIR/hooks/remind.sh" < /dev/null 2>/dev/null | head -5 | grep -q "user-prompt-submit-hook"
           echo "✓ remind.sh on Windows Git Bash"
-          echo '{"tool_name":"Edit","file_path":"test.ts"}' | "$CLAUDE_DIR/hooks/pre-write-guard.sh" | grep -q "pre-write-guard"
+          echo '{"tool_name":"Edit","file_path":"test.ts"}' | "$CLAUDE_DIR/hooks/pre-write-guard.sh" 2>/dev/null | grep -q "pre-write-guard"
           echo "✓ pre-write-guard.sh on Windows Git Bash"
