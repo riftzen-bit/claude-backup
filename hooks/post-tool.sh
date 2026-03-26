@@ -82,12 +82,12 @@ if [[ "$TOOL_NAME" == "ApplyPatch" ]] || \
 
   cat <<'EOF'
 <post-edit-review>
-File modified — mandatory review:
-1. Re-read the edited file to verify correctness
-2. Check for typos, logic errors, missing imports
-3. Run repo validators before claiming completion
-4. Dispatch code-reviewer(sonnet) after all edits done
-5. Dispatch security-reviewer(opus) before any commit
+File modified — 4-phase verification (from OmO):
+PHASE 1 — READ: Re-read every changed file. Check for stubs, TODOs, hardcoded values.
+PHASE 2 — CHECK: Run repo validators (build, types, lint, tests). Fix until clean.
+PHASE 3 — VERIFY: If UI, take screenshot. If API, test endpoint. If logic, trace the flow.
+PHASE 4 — GATE: Can you explain every change? Did you see it work? Confident nothing broke?
+After all edits: dispatch code-reviewer(sonnet). Before commit: dispatch security-reviewer(opus).
 </post-edit-review>
 EOF
 
@@ -137,6 +137,47 @@ elif [[ "$TOOL_NAME" == "Agent" ]]; then
 Subagent completed — verify its output before trusting. Check files it claims to have modified.
 </post-agent-review>
 EOF
+
+# ── READ/GREP/GLOB: directory context injection ──
+elif [[ "$TOOL_NAME" == "Read" ]] || [[ "$TOOL_NAME" == "Grep" ]] || [[ "$TOOL_NAME" == "Glob" ]]; then
+  # Extract file path from input and check for nearby AGENTS.md
+  FILE_DIR=$(printf '%s' "$INPUT_JSON" | python3 -c "
+import json, sys, os
+try:
+    d = json.load(sys.stdin)
+    p = ''
+    if isinstance(d, dict):
+        for k in ('file_path', 'path', 'pattern'):
+            if k in d and isinstance(d[k], str):
+                p = d[k]; break
+        if not p:
+            for v in d.values():
+                if isinstance(v, dict):
+                    for k in ('file_path', 'path'):
+                        if k in v and isinstance(v[k], str):
+                            p = v[k]; break
+    if p and os.path.isfile(p):
+        print(os.path.dirname(p))
+    elif p and os.path.isdir(p):
+        print(p)
+except: pass
+" 2>/dev/null)
+
+  if [ -n "$FILE_DIR" ] && [ -d "$FILE_DIR" ]; then
+    # Check for AGENTS.md up the directory tree (max 3 levels)
+    CHECK_DIR="$FILE_DIR"
+    for i in 1 2 3; do
+      if [ -f "$CHECK_DIR/AGENTS.md" ]; then
+        printf '<directory-context>\n'
+        printf '[AGENTS.md: %s/AGENTS.md]\n' "$CHECK_DIR"
+        head -40 "$CHECK_DIR/AGENTS.md"
+        printf '\n</directory-context>\n'
+        break
+      fi
+      CHECK_DIR=$(dirname "$CHECK_DIR")
+      [ "$CHECK_DIR" = "/" ] && break
+    done
+  fi
 fi
 
 exit 0

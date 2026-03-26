@@ -13,3 +13,17 @@ Desktop developer workspace at /home/paul/Projects/muxmux. Tauri v2 + React + Ty
 
 **Why:** Paul's public product for the developer community — a Tape Deck themed workspace combining terminal, editor, and browser.
 **How to apply:** Reference spec for Phase 2-4 requirements. Use subagent-driven development for implementation.
+
+## Updates (2026-03-25)
+- Chrome-style workspace tabs added (WorkspaceTabBar.tsx) — multi-workspace open/switch/rename/close
+- Split panes limited to 4 (was 8) to avoid cramped terminals
+- Terminal CSS fully audited: xterm bg overrides, flexlayout tab bg, SplitContainer pane gaps all fixed
+- 18 AGENTS.md files generated for codebase documentation
+- workspace-store: added openWorkspaceIds, switchWorkspace(), closeWorkspaceTab()
+
+## Next Steps
+- Develop all preset layouts fully (Browser, Code Only, Full Terminal, etc.) — user says UI feels small/cramped
+- Per-workspace terminal state isolation (terminal-store keyed by workspace ID)
+- Per-workspace layout state isolation (layout-store keyed by workspace ID)
+- UI space optimization — maximize content area, reduce chrome
+- Plan file: docs/workspace-tabs-plan.md (Phase 4-7 pending)

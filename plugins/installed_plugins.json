@@ -36,8 +36,8 @@
         "scope": "user",
         "installPath": "/home/paul/.claude/plugins/cache/claude-hud/claude-hud/0.0.9",
         "version": "0.0.9",
-        "installedAt": "2026-03-11T05:41:27.482Z",
-        "lastUpdated": "2026-03-11T05:41:27.482Z",
+        "installedAt": "2026-03-26T04:34:30.955Z",
+        "lastUpdated": "2026-03-26T04:34:30.955Z",
         "gitCommitSha": "c02787bf0e5f020c627c1d13076385cc8d32f2ed"
       }
     ],
@@ -134,10 +134,10 @@
     "ralph-loop@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/home/paul/.claude/plugins/cache/claude-plugins-official/ralph-loop/6722ef81fc24",
-        "version": "6722ef81fc24",
+        "installPath": "/home/paul/.claude/plugins/cache/claude-plugins-official/ralph-loop/d339e020a63f",
+        "version": "d339e020a63f",
         "installedAt": "2026-03-23T22:50:26.997Z",
-        "lastUpdated": "2026-03-25T21:38:30.762Z",
+        "lastUpdated": "2026-03-25T21:48:32.454Z",
         "gitCommitSha": "15268f03d2f560b955584a283927ed175569678c"
       }
     ],
@@ -149,6 +149,16 @@
         "installedAt": "2026-03-24T22:21:16.266Z",
         "lastUpdated": "2026-03-24T22:21:16.266Z",
         "gitCommitSha": "9180917b62607131d475aca12a88536d67e5fb18"
+      }
+    ],
+    "oh-my-claudecode@omc": [
+      {
+        "scope": "user",
+        "installPath": "/home/paul/.claude/plugins/cache/omc/oh-my-claudecode/4.9.1",
+        "version": "4.9.1",
+        "installedAt": "2026-03-25T23:00:45.988Z",
+        "lastUpdated": "2026-03-25T23:00:45.988Z",
+        "gitCommitSha": "275272679a878809686cb7977c7e2f9a22db4037"
       }
     ]
   }

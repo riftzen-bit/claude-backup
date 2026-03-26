@@ -47,3 +47,10 @@ All API changes additive. New fields can be added, existing fields never removed
 ## Deployment
 
 Never assume: local file paths, localhost databases, single-instance. Use configurable connection strings and env vars.
+
+## Context Window Management
+
+- Prefer targeted file reads over reading entire files
+- When delegating: include only relevant context, not everything
+- Large tool outputs: summarize findings, don't pass raw output
+- After 5+ tool calls: re-read active files instead of trusting memory

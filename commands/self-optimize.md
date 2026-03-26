@@ -16,7 +16,7 @@ Read ALL configuration files:
 6. All files in `~/.claude/agents/`
 7. All files in `~/.claude/skills/`
 8. All files in `~/.claude/commands/`
-9. `~/.claude/projects/-home-paul/memory/MEMORY.md` plus linked memory files
+9. `~/.claude/projects/memory/MEMORY.md` plus linked memory files
 10. `./CLAUDE.md` / `./README*` if in a project, then run `git log --oneline -20`
 
 ## Step 2: Status Report

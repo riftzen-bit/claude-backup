@@ -111,9 +111,10 @@ elif [[ "$TOOL_NAME" == "Agent" ]]; then
 <pre-agent-guard>
 Delegation checklist:
 1. MODEL: haiku(search) | sonnet(plan/review/validate) | opus(architecture/security)
-2. PROMPT: TASK + EXPECTED OUTCOME + SCOPE + CONTEXT
+2. PROMPT: 6-section format (TASK + EXPECTED OUTCOME + SCOPE + MUST DO + MUST NOT DO + CONTEXT)
 3. COLLISION: no file overlap with parallel agents
 4. ISOLATION: worktree for parallel dispatches
+5. NOTEPAD: include notepad paths in CONTEXT for multi-step work
 </pre-agent-guard>
 EOF
 

@@ -19,12 +19,14 @@ MANDATORY AUTOMATION CHECKLIST:
 - BEFORE claiming done: run build/typecheck/lint/tests AND show output
 - WHEN delegating to droids: include TDD rules and verification in every prompt
 - Paul is non-programmer — handle everything end-to-end, never skip quality gates
+- AUTO-CONTINUE: do NOT ask "should I proceed?" between clear steps — verify and move on
+- EXPLORE BEFORE ASK: search the codebase before asking user questions — only ask for product intent
 
 MANDATORY VISIBILITY — EVERY RESPONSE MUST START WITH THIS BLOCK:
 Print the following header as the FIRST line of EVERY response (no exceptions):
 
 ```
-[INJECT] enforce | agents(7) | routing(5-tier) | delegation(4-section) | project: {detected} | git: {branch}
+[INJECT] enforce | agents(7) | routing(5-tier) | delegation(6-section) | project: {detected} | git: {branch}
 ```
 
 This is non-negotiable. The user MUST see this line to confirm injection is active.

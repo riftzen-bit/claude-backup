@@ -77,6 +77,9 @@ BEFORE launching this subagent, verify:
    - All parallel agents MUST use worktree isolation.
    - Solo agents (no parallel peers) may skip worktree.
 
+5. ANTI-DUPLICATION: Was this exact work already done by a previous agent in this session?
+   - Check notepad for completed tasks before delegating duplicate work.
+
 Opus 4.6 is ALWAYS the leader.
 </routing-guard>
 EOF

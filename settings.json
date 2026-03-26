@@ -4,13 +4,20 @@
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_ENABLE_ECC_OBSERVE": "0",
-    "CLAUDE_CODE_NEW_INIT": "1"
+    "CLAUDE_CODE_NEW_INIT": "1",
+    "OPENCLAW_TELEGRAM_TOKEN": "8591349481:AAGsHRVipca305rVA06zsDYjyR49I5FOQEY"
   },
   "attribution": {
     "commit": "",
     "pr": ""
   },
   "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(dev-browser *)",
+      "Bash(npx dev-browser *)"
+    ]
+  },
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -129,7 +136,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash -c 'PLUGIN_DIR=$(ls -td /home/paul/.claude/plugins/cache/claude-ultimate-hud/claude-ultimate-hud/*/ 2>/dev/null | head -1); [ -n \"$PLUGIN_DIR\" ] || exit 0; exec \"/home/paul/.bun/bin/bun\" \"${PLUGIN_DIR%/}/dist/index.js\"'"
+    "command": "bash -c '\"/home/paul/.local/share/mise/installs/node/22.22.0/bin/node\" \"$(ls -td ~/.claude/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | head -1)dist/index.js\"'"
   },
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
@@ -142,7 +149,9 @@
     "typescript-lsp@claude-plugins-official": true,
     "vtsls@claude-code-lsps": true,
     "ralph-loop@claude-plugins-official": true,
-    "parallel-agents@parallel-agents-local": true
+    "parallel-agents@parallel-agents-local": true,
+    "oh-my-claudecode@omc": true,
+    "claude-hud@claude-hud": true
   },
   "extraKnownMarketplaces": {
     "parallel-agents-local": {
@@ -185,6 +194,18 @@
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "omc": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
       }
     }
   },

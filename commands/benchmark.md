@@ -16,7 +16,7 @@ import subprocess
 from pathlib import Path
 
 root = Path.home() / ".claude"
-memory_dir = root / "projects" / "-home-paul" / "memory"
+memory_dir = root / "projects/memory"
 
 def lines(path: Path) -> int:
     return len(path.read_text(encoding="utf-8").splitlines())
@@ -57,7 +57,7 @@ script_hook_paths = []
 inline_hooks = 0
 for _, command in hook_entries:
     first = command.split()[0] if command else ""
-    if first.startswith("/home/paul/.claude/hooks/") and first.endswith(".sh"):
+    if first.startswith("$HOME/.claude/hooks/") and first.endswith(".sh"):
         script_hook_paths.append(Path(first))
     else:
         inline_hooks += 1

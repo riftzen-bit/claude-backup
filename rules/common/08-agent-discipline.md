@@ -4,12 +4,14 @@
 
 When delegating to subagents, structure prompts with relevant sections:
 
-1. **TASK**: Quote exact requirement. Be specific.
-2. **EXPECTED OUTCOME**: Files/behavior/output expected.
-3. **SCOPE**: Files/areas to touch and NOT touch.
-4. **CONTEXT**: Relevant conventions, decisions, gotchas from the codebase.
+1. **TASK**: Quote exact requirement. Be obsessively specific.
+2. **EXPECTED OUTCOME**: Files created/modified, behavior change, verification command.
+3. **SCOPE**: Files/areas to touch and NOT to touch.
+4. **MUST DO**: Patterns to follow, tests to write, notepad entries to add.
+5. **MUST NOT DO**: Scope boundaries, features to skip, files to leave alone.
+6. **CONTEXT**: Conventions, prior decisions, dependencies, gotchas from the codebase.
 
-Skip sections that don't apply. A 3-line task doesn't need 4 sections.
+Skip sections that don't apply. A 3-line task doesn't need 6 sections.
 Include TDD rules and verification commands when delegating coding work.
 
 ## Intent Classification
