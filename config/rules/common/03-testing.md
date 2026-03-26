@@ -16,6 +16,7 @@ Every change needs a test: new function, bug fix, API endpoint, logic change, er
 - Every test fails first (RED) — a test that never failed proves nothing
 - If coverage jumps >30% in one session, review test quality not just quantity
 - Prefer integration tests over heavily-mocked unit tests for AI-generated code
+- Before writing tests, assess test infrastructure: detect framework, check for existing test patterns, decide TDD vs tests-after based on project conventions
 
 ## Coverage
 

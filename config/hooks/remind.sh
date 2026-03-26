@@ -43,12 +43,14 @@ Default: Simple unless evidence says otherwise.
 </intent-routing>
 
 <delegation-format>
-STRUCTURED DELEGATION — for every subagent prompt:
-1. TASK: exact requirement (quote user's words)
-2. EXPECTED OUTCOME: files/behavior/output expected
-3. SCOPE: what to touch and what NOT to touch
-4. CONTEXT: conventions, decisions, gotchas from codebase
-Skip irrelevant sections. Include TDD rules + verification commands for coding work.
+STRUCTURED DELEGATION — 6-section prompt for every subagent:
+1. TASK: exact requirement (quote user's words). Be obsessively specific.
+2. EXPECTED OUTCOME: files created/modified, behavior change, verification command.
+3. SCOPE: files to touch and NOT to touch.
+4. MUST DO: patterns to follow, tests to write, notepad entries.
+5. MUST NOT DO: scope boundaries, features to skip, files to leave alone.
+6. CONTEXT: conventions, prior decisions, dependencies, gotchas.
+Skip sections that don't apply. Include TDD rules + verification commands for coding work.
 </delegation-format>
 
 AGENTS
@@ -137,5 +139,20 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     [ -n "$DIRTY" ] && printf 'Modified: %s\n' "$(echo "$DIRTY" | tr '\n' ', ' | sed 's/,$//')"
     [ -n "$STAGED" ] && printf 'Staged: %s\n' "$(echo "$STAGED" | tr '\n' ', ' | sed 's/,$//')"
     printf '</git-context>\n'
+  fi
+fi
+
+# ══════════════════════════════════════════════════════════
+# SECTION 6: Todo continuation reminder (from OmO)
+# ══════════════════════════════════════════════════════════
+# Check for active notepad with issues
+if [ -d ".claude/notepads" ] && [ "$(ls -A .claude/notepads 2>/dev/null)" ]; then
+  ACTIVE=$(ls -d .claude/notepads/*/ 2>/dev/null | head -1)
+  if [ -n "$ACTIVE" ]; then
+    TASK_NAME=$(basename "$ACTIVE")
+    printf '<todo-continuation>\n'
+    printf 'Active work detected: %s\n' "$TASK_NAME"
+    printf 'Read .claude/notepads/%s/ before starting new work. Resume incomplete tasks first.\n' "$TASK_NAME"
+    printf '</todo-continuation>\n'
   fi
 fi

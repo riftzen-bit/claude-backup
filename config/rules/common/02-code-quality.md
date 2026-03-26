@@ -49,3 +49,12 @@ When adding endpoints, read 3+ existing endpoints and match: URL naming, HTTP me
 ## Dependency Direction
 
 Dependencies flow one direction (DAG). If A imports B and B imports A, extract shared code to a third module.
+
+## Anti-Patterns
+
+Before editing, check for these AI-generated code smells:
+- **Scope creep**: "Does this change solve ONLY the request?" — check references against scope
+- **Premature abstraction**: "Does this pattern repeat 3+ times?" — if no, keep it inline
+- **Over-validation**: 15 error checks for 3 inputs is a smell — match existing error handling
+- **Documentation bloat**: Added JSDoc/comments everywhere? Match existing doc style, not more
+- **Invented patterns**: Using a new pattern when the codebase has an existing one? Use existing

@@ -7,7 +7,8 @@
 3. Define scope — know what changes and what doesn't
 4. If behavior or acceptance criteria are unclear, ask concise product questions before coding
 5. Discover the repo's actual validator commands before coding
-6. Plan non-trivial tasks before coding
+6. Explore before asking — most questions about the codebase are discoverable through search; only ask for product intent
+7. Plan non-trivial tasks before coding
 
 ## Skill Usage
 
@@ -47,6 +48,14 @@ Manual on-demand skills:
 - Avoid runaway yak-shaving; if 3+ unrelated detours appear, re-scope consciously instead of drifting
 - If tool calls or fix loops are growing without progress, explain the blocker and ask the user; do not use the limit as an excuse to skip required verification
 - If a validator or acceptance criterion remains unmet, report it honestly instead of implying completion
+
+## Anti-Duplication
+
+Before starting work, check if it was already done:
+- Search for existing implementations before writing new code
+- Check git log for recent related changes
+- If delegating to subagents: include learnings from previous tasks in CONTEXT section
+- If multi-step work: read notepad before each new task
 
 ## Context Management
 
