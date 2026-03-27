@@ -167,7 +167,7 @@ jobs:
           echo "✓ hallucination guard"
           ~/.claude/hooks/remind.sh < /dev/null | grep -q "user-prompt-submit-hook"
           echo "✓ remind.sh"
-          ~/.claude/hooks/session-start.sh < /dev/null | grep -q "session-init"
+          ~/.claude/hooks/session-start.sh < /dev/null 2>&1 | grep -q "SessionStart"
           echo "✓ session-start.sh"
           echo "" | ~/.claude/hooks/pre-write-guard.sh
           echo "✓ empty stdin handled"
@@ -237,8 +237,8 @@ jobs:
           }
           Write-Host "✓ Paths replaced"
           $hookCount = (Get-ChildItem (Join-Path $target "hooks\*.sh")).Count
-          if ($hookCount -ne 9) {
-            Write-Error "Expected 9 hooks, found $hookCount"; exit 1
+          if ($hookCount -ne 12) {
+            Write-Error "Expected 12 hooks, found $hookCount"; exit 1
           }
           Write-Host "✓ $hookCount hook scripts"
           $agentCount = (Get-ChildItem (Join-Path $target "agents\*.md")).Count
