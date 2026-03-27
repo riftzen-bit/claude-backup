@@ -85,13 +85,25 @@ is_mutating_bash() {
 if is_edit_tool; then
   cat <<'EOF'
 <pre-write-guard>
-STOP — before editing:
-1. Re-read the target file first (memory degrades after 5+ tool calls)
+STOP — MANDATORY CHECKS before editing:
+
+1. RE-READ the target file first (memory degrades after 5+ tool calls)
 2. If behavior or acceptance criteria are unclear, ask before changing code
-3. If the repo has tests, write a failing test FIRST (TDD)
+3. TDD ENFORCEMENT (NON-NEGOTIABLE):
+   [] Have you written the failing test FIRST? If NO -> write test before this edit
+   [] Does a test file exist for this source file? If NO -> create it FIRST
+   [] Plan your test cases: happy path, edge cases, errors, security
 4. Match existing code style, naming, and patterns
-5. No @ts-ignore, no eslint-disable, no type:ignore
-Routing: delegate review to code-reviewer(sonnet) after edit, security-reviewer(opus) before commit.
+5. No @ts-ignore, no eslint-disable, no type:ignore, no any
+6. No hardcoded secrets, no console.log in production code
+7. Validate all user input at boundaries
+8. Parameterize all queries (no string concatenation for SQL)
+
+TDD IS NOT OPTIONAL. Write the test BEFORE writing the implementation.
+If you are about to edit a source file without having written tests first,
+you are doing it wrong. Stop, write the test, then come back.
+
+Routing: code-reviewer(sonnet) after edit, security-reviewer(opus) before commit.
 </pre-write-guard>
 EOF
 elif is_mutating_bash; then

@@ -1,44 +1,44 @@
 #!/bin/bash
-# UserPromptSubmit — OmO-style comprehensive injection on every user message
-# Transparent, structured, clearly visible — like Oh My OpenAgent's message transform
+# UserPromptSubmit — comprehensive context injection on every user message
+# Uses JSON additionalContext format for reliable injection
 
-STATE_DIR="__HOME__/.claude/state"
+STATE_DIR="$HOME/.claude/state"
 mkdir -p "$STATE_DIR"
 
 # ══════════════════════════════════════════════════════════
-# SECTION 1: Core enforcement (from enforce.md)
+# BUILD CONTEXT STRING (collect all sections into one variable)
 # ══════════════════════════════════════════════════════════
-ENFORCE_FILE="__HOME__/.claude/enforce.md"
-[ -f "$ENFORCE_FILE" ] && cat "$ENFORCE_FILE"
+CTX=""
 
-# ══════════════════════════════════════════════════════════
+# SECTION 1: Core enforcement (from enforce.md)
+ENFORCE_FILE="$HOME/.claude/enforce.md"
+[ -f "$ENFORCE_FILE" ] && CTX="$(cat "$ENFORCE_FILE")"
+
 # SECTION 2: Agent roster + routing table
-# ══════════════════════════════════════════════════════════
-cat <<'AGENTS'
+CTX="${CTX}
 
 <agent-roster>
 SPECIALIST AGENTS — delegate aggressively (1 Opus = 60 Haiku)
-┌────────────────────┬─────────┬─────────────────────────────────────┐
-│ Agent              │ Model   │ Capabilities                        │
-├────────────────────┼─────────┼─────────────────────────────────────┤
-│ repo-scout         │ haiku   │ File discovery, validators, cross-  │
-│                    │         │ tool rules, convention matching     │
-│ planner            │ sonnet  │ Intent classification, plans, risks │
-│ code-reviewer      │ sonnet  │ Post-edit quality review            │
-│ validator          │ sonnet  │ Build/typecheck/lint/tests runner   │
-│ security-reviewer  │ opus    │ Pre-commit security scan            │
-│ open-source-librarian│sonnet │ Library/docs/source research        │
-│ media-interpreter  │ haiku   │ PDFs, images, diagrams extraction   │
-└────────────────────┴─────────┴─────────────────────────────────────┘
++--------------------+---------+-------------------------------------+
+| Agent              | Model   | Capabilities                        |
++--------------------+---------+-------------------------------------+
+| repo-scout         | haiku   | File discovery, convention matching |
+| planner            | sonnet  | Intent classification, plans, risks |
+| code-reviewer      | sonnet  | Post-edit quality review            |
+| validator          | sonnet  | Build/typecheck/lint/tests runner   |
+| security-reviewer  | opus    | Pre-commit security scan            |
+| open-source-librarian| sonnet| Library/docs/source research        |
+| media-interpreter  | haiku   | PDFs, images, diagrams extraction   |
++--------------------+---------+-------------------------------------+
 </agent-roster>
 
 <intent-routing>
 CLASSIFY BEFORE ACTING — adapt depth to complexity:
-Trivial  (<10 lines, 1 file)  → do directly, no planning
-Simple   (1-2 files, clear)   → 1-2 questions max, then execute
-Medium   (3-5 files, scoped)  → brief plan, validate approach, execute
-Complex  (5+ files, arch)     → full plan with user review first
-Research (unclear path)       → investigate, propose options, then plan
+Trivial  (<10 lines, 1 file)  -> do directly, no planning
+Simple   (1-2 files, clear)   -> 1-2 questions max, then execute
+Medium   (3-5 files, scoped)  -> brief plan, validate approach, execute
+Complex  (5+ files, arch)     -> full plan with user review first
+Research (unclear path)        -> investigate, propose options, then plan
 Default: Simple unless evidence says otherwise.
 </intent-routing>
 
@@ -51,13 +51,9 @@ STRUCTURED DELEGATION — 6-section prompt for every subagent:
 5. MUST NOT DO: scope boundaries, features to skip, files to leave alone.
 6. CONTEXT: conventions, prior decisions, dependencies, gotchas.
 Skip sections that don't apply. Include TDD rules + verification commands for coding work.
-</delegation-format>
+</delegation-format>"
 
-AGENTS
-
-# ══════════════════════════════════════════════════════════
 # SECTION 3: Cross-tool rules injection (cached per directory)
-# ══════════════════════════════════════════════════════════
 DIR_HASH=$(printf '%s' "$(pwd)" | md5sum | cut -c1-8)
 RULES_CACHE="$STATE_DIR/cross-rules-$DIR_HASH.txt"
 
@@ -85,22 +81,21 @@ $(head -40 "$f")
 fi
 
 if [ -s "$RULES_CACHE" ]; then
-  printf '<cross-tool-context>\n'
-  cat "$RULES_CACHE"
-  printf '</cross-tool-context>\n'
+  CTX="${CTX}
+<cross-tool-context>
+$(cat "$RULES_CACHE")
+</cross-tool-context>"
 fi
 
-# ══════════════════════════════════════════════════════════
-# SECTION 4: Project type detection (skip home directory)
-# ══════════════════════════════════════════════════════════
+# SECTION 4: Project type detection
 PROJECT_LANGS=""
 if [ "$(pwd)" != "$HOME" ]; then
   [ -f "package.json" ] && PROJECT_LANGS="javascript"
   [ -f "tsconfig.json" ] && PROJECT_LANGS="typescript"
-  [ -f "pyproject.toml" ] || [ -f "setup.py" ] && PROJECT_LANGS="python"
+  ([ -f "pyproject.toml" ] || [ -f "setup.py" ]) && PROJECT_LANGS="python"
   [ -f "go.mod" ] && PROJECT_LANGS="go"
   [ -f "Cargo.toml" ] && PROJECT_LANGS="rust"
-  [ -f "build.gradle.kts" ] || [ -f "build.gradle" ] && PROJECT_LANGS="kotlin/java"
+  ([ -f "build.gradle.kts" ] || [ -f "build.gradle" ]) && PROJECT_LANGS="kotlin/java"
   [ -f "Package.swift" ] && PROJECT_LANGS="swift"
 fi
 
@@ -116,43 +111,68 @@ if [ -n "$PROJECT_LANGS" ]; then
   [ -f "pyproject.toml" ] && grep -q 'django' pyproject.toml 2>/dev/null && FRAMEWORKS="django"
   [ -f "pyproject.toml" ] && grep -q 'fastapi' pyproject.toml 2>/dev/null && FRAMEWORKS="${FRAMEWORKS:+$FRAMEWORKS,}fastapi"
 
-  printf '<project-context>\n'
-  printf 'Project type: {"languages":["%s"],"frameworks":[%s],"primary":"%s","projectDir":"%s"}\n' \
-    "$PROJECT_LANGS" \
-    "$([ -n "$FRAMEWORKS" ] && printf '"%s"' "$FRAMEWORKS" || printf '')" \
-    "$PROJECT_LANGS" \
-    "$(pwd)"
-  printf '</project-context>\n'
+  CTX="${CTX}
+<project-context>
+Project type: languages=[${PROJECT_LANGS}] frameworks=[${FRAMEWORKS}] dir=$(pwd)
+</project-context>"
 fi
 
-# ══════════════════════════════════════════════════════════
-# SECTION 5: Git context (branch + recent changes)
-# ══════════════════════════════════════════════════════════
+# SECTION 5: Git context
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   BRANCH=$(git branch --show-current 2>/dev/null)
   DIRTY=$(git diff --name-only 2>/dev/null | head -5)
   STAGED=$(git diff --cached --name-only 2>/dev/null | head -5)
 
   if [ -n "$BRANCH" ]; then
-    printf '<git-context>\n'
-    printf 'Branch: %s\n' "$BRANCH"
-    [ -n "$DIRTY" ] && printf 'Modified: %s\n' "$(echo "$DIRTY" | tr '\n' ', ' | sed 's/,$//')"
-    [ -n "$STAGED" ] && printf 'Staged: %s\n' "$(echo "$STAGED" | tr '\n' ', ' | sed 's/,$//')"
-    printf '</git-context>\n'
+    GIT_CTX="Branch: ${BRANCH}"
+    [ -n "$DIRTY" ] && GIT_CTX="${GIT_CTX}\nModified: $(echo "$DIRTY" | tr '\n' ', ' | sed 's/,$//')"
+    [ -n "$STAGED" ] && GIT_CTX="${GIT_CTX}\nStaged: $(echo "$STAGED" | tr '\n' ', ' | sed 's/,$//')"
+    CTX="${CTX}
+<git-context>
+${GIT_CTX}
+</git-context>"
   fi
 fi
 
-# ══════════════════════════════════════════════════════════
-# SECTION 6: Todo continuation reminder (from OmO)
-# ══════════════════════════════════════════════════════════
-# Check for active notepad with issues
+# SECTION 6: Todo continuation
 if [ -d ".claude/notepads" ] && [ "$(ls -A .claude/notepads 2>/dev/null)" ]; then
   ACTIVE=$(ls -d .claude/notepads/*/ 2>/dev/null | head -1)
   if [ -n "$ACTIVE" ]; then
     TASK_NAME=$(basename "$ACTIVE")
-    printf '<todo-continuation>\n'
-    printf 'Active work detected: %s\n' "$TASK_NAME"
-    printf 'Read .claude/notepads/%s/ before starting new work. Resume incomplete tasks first.\n' "$TASK_NAME"
-    printf '</todo-continuation>\n'
+    CTX="${CTX}
+<todo-continuation>
+Active work detected: ${TASK_NAME}
+Read .claude/notepads/${TASK_NAME}/ before starting new work. Resume incomplete tasks first.
+</todo-continuation>"
   fi
 fi
+
+# ══════════════════════════════════════════════════════════
+# OUTPUT: JSON with additionalContext for reliable injection
+# ══════════════════════════════════════════════════════════
+
+# Count active sections for summary
+SECTION_COUNT=0
+echo "$CTX" | grep -qc '<' && SECTION_COUNT=$(echo "$CTX" | grep -o '<[a-z-]*>' | sort -u | wc -l)
+CTX_LEN=${#CTX}
+
+# Build visible summary for systemMessage
+SUMMARY="[Inject] ${SECTION_COUNT} sections | ${CTX_LEN} chars"
+[ -n "$PROJECT_LANGS" ] && SUMMARY="${SUMMARY} | ${PROJECT_LANGS}"
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 && SUMMARY="${SUMMARY} | $(git branch --show-current 2>/dev/null)"
+
+# Output JSON with both visible message + full context injection
+python3 -c "
+import json, sys
+ctx = sys.stdin.read()
+summary = sys.argv[1]
+print(json.dumps({
+    'systemMessage': summary,
+    'hookSpecificOutput': {
+        'hookEventName': 'UserPromptSubmit',
+        'additionalContext': ctx
+    }
+}))
+" "$SUMMARY" <<< "$CTX"
+
+exit 0

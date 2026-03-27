@@ -1,5 +1,10 @@
 # Claude Code Configuration Hub
 
+## Identity
+- Owner: [Your name]
+- Language: [Your language] for conversation, English for code/rules
+- Model policy: Opus leads ambiguity, architecture, and security; route search/review/validation to cheaper agents
+
 ## Session Load Order
 Read before action:
 1. `~/.claude/enforce.md`
@@ -30,10 +35,58 @@ Read before action:
 ## Commands
 - `/route`, `/design`, `/routing-stats`, `/self-optimize`, `/benchmark`
 
+## MANDATORY Testing Protocol
+
+### The Iron Law
+Every source file MUST have a corresponding test file. No exceptions. No "later."
+Tests are written FIRST (TDD), not after. The boulder never stops.
+
+### TDD Cycle (RED -> GREEN -> REFACTOR)
+1. **RED**: Write a failing test describing desired behavior
+2. **GREEN**: Write MINIMUM code to pass the test
+3. **REFACTOR**: Clean up while keeping tests green
+4. **REPEAT** for every function, method, and code path
+
+### Required Test Categories (write ALL that apply)
+| Category | What to test |
+|----------|-------------|
+| Happy path | Normal inputs -> expected outputs |
+| Edge cases | Empty, null, undefined, zero, NaN, max values, unicode |
+| Error handling | Invalid inputs throw/return proper errors |
+| Boundary | Off-by-one, min/max, overflow, timeout |
+| Security | SQL/XSS/command injection, auth bypass, path traversal |
+| Integration | Component interactions, API contracts |
+| Async/Race | Concurrent access, promise rejection, timeout |
+| State | State transitions, side effects, cleanup |
+| Regression | Exact scenario that caused a bug |
+
+### Minimum Requirements
+- 5+ test cases per exported function/method
+- 3+ edge case tests per function
+- 100% coverage of error paths
+- 100% coverage of public API surface
+- Mock external deps, test real logic
+- Test BOTH success AND failure scenarios
+- Use realistic test data, not "foo"/"bar"
+- Coverage: 80%+ overall, 100% new code
+
+### Completion Gate
+Before claiming "done", ALL must be true:
+- [ ] Every modified source file has a test file
+- [ ] Every new function has 5+ test cases
+- [ ] Edge cases covered (null, empty, boundary)
+- [ ] Error paths have explicit tests
+- [ ] Security-sensitive code has injection tests
+- [ ] Tests passing (show actual output)
+- [ ] No skipped/disabled/TODO tests
+- [ ] Build, lint, typecheck all pass
+
 ## Non-Negotiables
-- Ask concise product-intent questions when behavior, scope, or acceptance criteria are unclear
+- Ask concise product-intent questions when behavior, scope, or acceptance criteria are unclear; never guess missing requirements
+- Do not ask the user for technical implementation choices unless unavoidable
 - Read files before editing and re-read after more than 5 tool calls
 - Never claim tested, verified, or reviewed unless the command or review actually ran
 - After edits: run actual repo validators, then code review, then summarize with evidence
 - Prefer direct tools for one-step work; use agents to save cost on search, planning, review, and validation
 - After compaction: re-read `CLAUDE.md`, recent git log, and active files
+- NEVER skip writing tests. Tests are mandatory, not optional. They are part of the definition of "done."

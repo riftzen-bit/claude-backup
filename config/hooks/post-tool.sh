@@ -70,7 +70,7 @@ MUTATING_BASH=$(printf '%s\n' "$PARSED" | sed -n '2p')
 
 # Optional ECC observation (disabled by default; explicit opt-in only)
 if [ "$CLAUDE_ENABLE_ECC_OBSERVE" = "1" ]; then
-  echo "$INPUT_JSON" | __HOME__/.claude/hooks/ecc-observe.sh post >/dev/null 2>&1 &
+  echo "$INPUT_JSON" | "$HOME/.claude/hooks/ecc-observe.sh" post >/dev/null 2>&1 &
 fi
 
 # ── EDIT TOOLS: full review ──
@@ -82,12 +82,20 @@ if [[ "$TOOL_NAME" == "ApplyPatch" ]] || \
 
   cat <<'EOF'
 <post-edit-review>
-File modified — 4-phase verification (from OmO):
+File modified — 5-PHASE VERIFICATION (TDD-enforced):
+
 PHASE 1 — READ: Re-read every changed file. Check for stubs, TODOs, hardcoded values.
-PHASE 2 — CHECK: Run repo validators (build, types, lint, tests). Fix until clean.
-PHASE 3 — VERIFY: If UI, take screenshot. If API, test endpoint. If logic, trace the flow.
-PHASE 4 — GATE: Can you explain every change? Did you see it work? Confident nothing broke?
+PHASE 2 — TEST (MANDATORY):
+  [] Does a test file exist for this source file? If NO -> create it NOW.
+  [] Write tests for ALL new/changed behavior (min 5 cases per function).
+  [] Cover: happy path, edge cases, error handling, boundary, security.
+  [] Run tests. They MUST pass. Show output.
+PHASE 3 — CHECK: Run ALL repo validators (build, types, lint, tests). Fix until clean.
+PHASE 4 — VERIFY: If UI, take screenshot. If API, test endpoint. If logic, trace the flow.
+PHASE 5 — GATE: Every change explainable? Tests passing? Coverage adequate?
+
 After all edits: dispatch code-reviewer(sonnet). Before commit: dispatch security-reviewer(opus).
+The boulder never stops — tests are part of the work, not optional.
 </post-edit-review>
 EOF
 

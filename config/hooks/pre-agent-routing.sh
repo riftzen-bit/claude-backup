@@ -58,10 +58,10 @@ cat <<'EOF'
 BEFORE launching this subagent, verify:
 
 1. MODEL ASSIGNMENT: Is the model parameter correct?
-   - SIMPLE tasks → model: "haiku"
-   - MEDIUM tasks → model: "sonnet"
-   - COMPLEX tasks → model: "opus"
-   - FRONTEND tasks → use /design command (real tmux Gemini worker, NOT Bash timeout)
+   - SIMPLE tasks -> model: "haiku"
+   - MEDIUM tasks -> model: "sonnet"
+   - COMPLEX tasks -> model: "opus"
+   - FRONTEND tasks -> use /design command (real tmux Gemini worker, NOT Bash timeout)
 
 2. ROUTING APPROVAL:
    - Clear-cut tasks (search, planning, code review, validation, security scan): auto-dispatch OK; dispatches are logged automatically
@@ -79,7 +79,5 @@ BEFORE launching this subagent, verify:
 
 5. ANTI-DUPLICATION: Was this exact work already done by a previous agent in this session?
    - Check notepad for completed tasks before delegating duplicate work.
-
-Opus 4.6 is ALWAYS the leader.
 </routing-guard>
 EOF

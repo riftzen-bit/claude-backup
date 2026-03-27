@@ -2,6 +2,7 @@
   "env": {
     "MAX_THINKING_TOKENS": "31999",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_ENABLE_ECC_OBSERVE": "0"
   },
   "attribution": {
@@ -43,6 +44,16 @@
         ]
       },
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/pre-edit-reread-guard.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "Agent",
         "hooks": [
           {
@@ -64,6 +75,11 @@
           },
           {
             "type": "command",
+            "command": "__HOME__/.claude/hooks/test-enforcer.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
             "command": "__HOME__/.claude/hooks/notify.sh",
             "timeout": 5
           }
@@ -75,7 +91,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT \u2014 save current task state to memory files NOW, then list all files you were editing.</pre-compact-hook>'"
+            "command": "echo '<pre-compact-hook>COMPACTION IMMINENT — MANDATORY ACTIONS:\n1. Save feedback/learnings to memory files NOW\n2. Save current task state (done/remaining) to memory\n3. List ALL files you were editing (paths)\n4. After compaction: post-compact.sh will fire — read ALL files it tells you\n5. post-compact.sh will re-inject enforce.md directly before you continue</pre-compact-hook>'"
           }
         ]
       }
@@ -119,12 +135,100 @@
         "hooks": [
           {
             "type": "command",
-            "command": "paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || true"
+            "command": "__HOME__/.claude/hooks/ralph-stop-hook.sh",
+            "timeout": 3
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || afplay /System/Library/Sounds/Glass.aiff 2>/dev/null || powershell.exe -c '[System.Media.SystemSounds]::Asterisk.Play()' 2>/dev/null || true"
           }
         ]
       }
     ]
   },
+  "enabledPlugins": {
+    "everything-claude-code@everything-claude-code": true,
+    "frontend-design@claude-code-plugins": true,
+    "superpowers@superpowers-dev": true,
+    "security-guidance@claude-code-plugins": true,
+    "code-review@claude-code-plugins": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "vtsls@claude-code-lsps": true,
+    "ralph-loop@claude-plugins-official": true,
+    "oh-my-claudecode@omc": true,
+    "claude-hud@claude-hud": true
+  },
+  "extraKnownMarketplaces": {
+    "everything-claude-code": {
+      "source": {
+        "source": "github",
+        "repo": "affaan-m/everything-claude-code"
+      }
+    },
+    "claude-code-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-code.git"
+      }
+    },
+    "claude-ultimate-hud": {
+      "source": {
+        "source": "github",
+        "repo": "hadamyeedady12-dev/claude-ultimate-hud"
+      }
+    },
+    "superpowers-dev": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/obra/superpowers.git"
+      }
+    },
+    "claude-code-lsps": {
+      "source": {
+        "source": "github",
+        "repo": "Piebald-AI/claude-code-lsps"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "omc": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    }
+  },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Reviewing files",
+      "Planning changes",
+      "Running checks",
+      "Verifying output",
+      "Analyzing diff",
+      "Inspecting codebase",
+      "Checking assumptions",
+      "Routing subtasks",
+      "Running validators",
+      "Preparing answer"
+    ]
+  },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "showThinkingSummaries": true
 }

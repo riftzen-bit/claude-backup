@@ -28,12 +28,12 @@ This config fixes all of that.
 ## What You Get
 
 ```
-10 rules          Enforced engineering discipline — not suggestions, rules
+13 rules          Enforced engineering discipline — not suggestions, rules
  7 agents         Cost-routed specialists (haiku $0.002 → opus $0.105 per task)
- 9 hooks          Automated guardrails on every action
+12 hooks          Automated guardrails on every action
  5 commands       /route, /design, /routing-stats, /self-optimize, /benchmark
  7 skills         From TDD enforcement to anti-AI-looking UI design
- 8 plugins        Superpowers, ECC, HUD, LSP, security, code review
+10 plugins        Superpowers, ECC, HUD, LSP, security, code review, Ralph loop
 ```
 
 ---
@@ -100,13 +100,19 @@ Every single message you send triggers this chain:
 │  │  pre-write-guard.sh catches edits + mutating commands  │ │
 │  │  → "did you read this file first? tests exist?"        │ │
 │  │                                                        │ │
+│  │  pre-edit-reread-guard.sh tracks file read timestamps  │ │
+│  │  → "this file is stale — re-read before editing!"      │ │
+│  │                                                        │ │
 │  │  pre-agent-routing.sh validates model assignment       │ │
 │  │  → "haiku for search, sonnet for review, not opus"     │ │
 │  └────────────────────────────────────────────────────────┘ │
 │                          ↓                                  │
 │  ┌─ PostToolUse ──────────────────────────────────────────┐ │
-│  │  post-tool.sh reviews the change                       │ │
-│  │  → "re-read, check imports, would a senior approve?"   │ │
+│  │  post-tool.sh reviews the change (5-phase TDD)         │ │
+│  │  → "re-read, write tests, run validators, verify"      │ │
+│  │                                                        │ │
+│  │  test-enforcer.sh checks for missing test files        │ │
+│  │  → "no test file for this source? create it NOW"       │ │
 │  │                                                        │ │
 │  │  Hallucination guard catches fake packages             │ │
 │  │  → "MODULE_NOT_FOUND? verify it exists first"          │ │
@@ -153,7 +159,7 @@ security-reviewer ─ opus      Secrets, injection, auth review
 
 ### The Rules
 
-Ten files in `rules/` that load automatically:
+Thirteen files in `rules/` that load automatically:
 
 ```
 00-mandatory-mindset    Never edit without reading. Never claim done without proof.
@@ -164,6 +170,9 @@ Ten files in `rules/` that load automatically:
 05-production           Check for N+1 queries, unbounded SELECTs, missing timeouts.
 06-self-optimization    Promote repeated patterns to rules. Consolidate at 30 memories.
 07-model-routing        Route cheap. Retry one tier higher on failure.
+08-agent-discipline     6-section delegation format. Intent classification before action.
+09-notepad-system       Accumulate wisdom across multi-step tasks via notepads.
+10-auto-continue        Explore before asking. Auto-continue between clear steps.
 ────────────────────
 typescript/coding-style Path-scoped to *.ts/*.tsx — immutability, Zod, no console.log
 typescript/patterns     Path-scoped to *.ts/*.tsx — detect existing API patterns first
@@ -275,19 +284,22 @@ rm -rf /tmp/dr
 │   ├── self-optimize.md          Deep config audit
 │   └── benchmark.md              100-point quality score
 │
-├── hooks/                    ← 9 automated guardrails
-│   ├── remind.sh                 Inject enforce.md every message
-│   ├── pre-write-guard.sh        Re-read reminder before edits
+├── hooks/                    ← 12 automated guardrails
+│   ├── remind.sh                 Inject enforce.md + context every message
+│   ├── pre-write-guard.sh        TDD guard before edits + mutating commands
+│   ├── pre-edit-reread-guard.sh  Track file reads, block stale edits
 │   ├── pre-agent-routing.sh      Model assignment + collision check
-│   ├── post-tool.sh              Review + hallucination guard
+│   ├── post-tool.sh              5-phase TDD review + hallucination guard
+│   ├── test-enforcer.sh          Demand test files for modified sources
+│   ├── ralph-stop-hook.sh        Ralph loop — prevent stop until done
 │   ├── notify.sh                 Desktop notification on file changes
-│   ├── session-start.sh          Load context on session init
+│   ├── session-start.sh          Token auto-refresh + project detection
 │   ├── post-compact.sh           Restore context after compaction
 │   ├── subagent-stop.sh          Log agent completions
 │   └── ecc-observe.sh            Optional ECC learning (disabled)
 │
 ├── rules/
-│   ├── common/               ← 8 universal engineering rules
+│   ├── common/               ← 11 universal engineering rules
 │   │   ├── 00-mandatory-mindset.md
 │   │   ├── 01-workflow.md
 │   │   ├── 02-code-quality.md
@@ -295,7 +307,10 @@ rm -rf /tmp/dr
 │   │   ├── 04-safety.md
 │   │   ├── 05-production.md
 │   │   ├── 06-self-optimization.md
-│   │   └── 07-model-routing.md
+│   │   ├── 07-model-routing.md
+│   │   ├── 08-agent-discipline.md
+│   │   ├── 09-notepad-system.md
+│   │   └── 10-auto-continue.md
 │   └── typescript/           ← 2 path-scoped rules (*.ts, *.tsx)
 │       ├── coding-style.md
 │       └── patterns.md
