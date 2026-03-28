@@ -7,14 +7,14 @@ CREDS="$HOME/.claude/.credentials.json"
 
 # --- Token status check (read-only, no refresh attempts) ---
 if [[ ! -f "$CREDS" ]]; then
-  echo "SessionStart:WARNING: No credentials file found. Run: claude auth login" >&2
+  echo "SessionStart:WARNING: No credentials file found. Run: claude auth login"
   exit 0
 fi
 
 expires_at=$(jq -r '.claudeAiOauth.expiresAt // empty' "$CREDS" 2>/dev/null)
 
 if [[ -z "$expires_at" ]]; then
-  echo "SessionStart:WARNING: No OAuth token found. Run: claude auth login" >&2
+  echo "SessionStart:WARNING: No OAuth token found. Run: claude auth login"
   exit 0
 fi
 
@@ -25,10 +25,10 @@ remaining_m=$(( (remaining_ms % 3600000) / 60000 ))
 
 if (( remaining_ms <= 0 )); then
   notify-send "Claude Code" "Token expired. Run: claude auth login" 2>/dev/null || true
-  echo "SessionStart:TOKEN EXPIRED. Run: claude auth login" >&2
+  echo "SessionStart:TOKEN EXPIRED. Run: claude auth login"
   exit 0
 elif (( remaining_ms < 3600000 )); then
-  echo "SessionStart:Token expires in ${remaining_h}h${remaining_m}m — Claude Code will auto-refresh" >&2
+  echo "SessionStart:Token expires in ${remaining_h}h${remaining_m}m — Claude Code will auto-refresh"
 fi
 
 # --- Project type detection ---
