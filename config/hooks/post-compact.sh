@@ -2,7 +2,10 @@
 # SessionStart[compact] hook — restore context after compaction
 # Adapted from OmO's Compaction Context Injector (8-section structured recovery)
 
-MEMORY_FILE="__HOME__/.claude/projects/-home-paul/memory/MEMORY.md"
+# Build memory path dynamically from current working directory
+_sanitized_cwd=$(pwd | sed 's|/|-|g; s|^-||')
+MEMORY_FILE="__HOME__/.claude/projects/${_sanitized_cwd}/memory/MEMORY.md"
+[ ! -f "$MEMORY_FILE" ] && MEMORY_FILE="$(find __HOME__/.claude/projects/ -name MEMORY.md -type f 2>/dev/null | head -1)"
 ENFORCE_FILE="__HOME__/.claude/enforce.md"
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   GIT_STEP="   e) git log --oneline -10 — recent work context\n   f) Any files you were actively editing before compaction"
@@ -31,8 +34,7 @@ $GIT_STEP
 ${NOTEPAD_MSG}
 
 2. IDENTITY REMINDER:
-   Owner: Paul, Vietnamese speaker, non-programmer, PST timezone
-   Language: Vietnamese (conversation), English (code)
+   Re-read CLAUDE.md for owner identity, language, and model policy.
    Model policy: Opus leads ambiguity/architecture/security; delegate simpler work
 
 3. RESUME WORK — use this checklist to reconstruct context:

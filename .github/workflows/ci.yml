@@ -237,8 +237,8 @@ jobs:
           }
           Write-Host "✓ Paths replaced"
           $hookCount = (Get-ChildItem (Join-Path $target "hooks\*.sh")).Count
-          if ($hookCount -ne 12) {
-            Write-Error "Expected 12 hooks, found $hookCount"; exit 1
+          if ($hookCount -ne 13) {
+            Write-Error "Expected 13 hooks, found $hookCount"; exit 1
           }
           Write-Host "✓ $hookCount hook scripts"
           $agentCount = (Get-ChildItem (Join-Path $target "agents\*.md")).Count
