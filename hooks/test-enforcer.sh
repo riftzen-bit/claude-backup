@@ -94,7 +94,7 @@ TEST_PATTERNS = {
     ".cjs": [".test.cjs", ".spec.cjs"],
     ".py":  ["_test.py", "test_"],
     ".go":  ["_test.go"],
-    ".rs":  ["_test.rs", "/tests/"],
+    ".rs":  ["_test.rs"],
     ".rb":  ["_spec.rb", "_test.rb"],
     ".java":["Test.java", "Tests.java"],
     ".kt":  ["Test.kt", "Tests.kt"],
