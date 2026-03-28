@@ -4,8 +4,7 @@
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_ENABLE_ECC_OBSERVE": "0",
-    "CLAUDE_CODE_NEW_INIT": "1",
-    "OPENCLAW_TELEGRAM_TOKEN": "8591349481:AAGsHRVipca305rVA06zsDYjyR49I5FOQEY"
+    "CLAUDE_CODE_NEW_INIT": "1"
   },
   "attribution": {
     "commit": "",
@@ -52,6 +51,26 @@
         ]
       },
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/pre-edit-reread-guard.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|ApplyPatch|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/tdd-blocker.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "Agent",
         "hooks": [
           {
@@ -69,6 +88,11 @@
           {
             "type": "command",
             "command": "/home/paul/.claude/hooks/post-tool.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "/home/paul/.claude/hooks/test-enforcer.sh",
             "timeout": 10
           },
           {
@@ -128,6 +152,16 @@
         "hooks": [
           {
             "type": "command",
+            "command": "/home/paul/.claude/hooks/ralph-stop-hook.sh",
+            "timeout": 3
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
             "command": "paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || true"
           }
         ]
@@ -140,7 +174,7 @@
   },
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true,
-    "frontend-design@claude-code-plugins": true,
+    "frontend-design@claude-code-plugins": false,
     "learning-output-style@claude-code-plugins": false,
     "claude-ultimate-hud@claude-ultimate-hud": true,
     "superpowers@superpowers-dev": true,
@@ -151,7 +185,8 @@
     "ralph-loop@claude-plugins-official": true,
     "parallel-agents@parallel-agents-local": true,
     "oh-my-claudecode@omc": true,
-    "claude-hud@claude-hud": true
+    "claude-hud@claude-hud": true,
+    "frontend-design@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "parallel-agents-local": {

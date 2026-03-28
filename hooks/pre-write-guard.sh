@@ -85,13 +85,23 @@ is_mutating_bash() {
 if is_edit_tool; then
   cat <<'EOF'
 <pre-write-guard>
-STOP — before editing:
-1. Re-read the target file first (memory degrades after 5+ tool calls)
-2. If behavior or acceptance criteria are unclear, ask before changing code
-3. If the repo has tests, write a failing test FIRST (TDD)
-4. Match existing code style, naming, and patterns
-5. No @ts-ignore, no eslint-disable, no type:ignore
-Routing: delegate review to code-reviewer(sonnet) after edit, security-reviewer(opus) before commit.
+STOP — BEFORE THIS EDIT, VERIFY ALL OF THESE:
+
+1. SEARCH: Did you search the codebase for existing code that does this? (3+ queries)
+2. READ: Did you re-read THIS file AND all files that import/use it?
+3. UNDERSTAND: Can you trace every function call chain affected by this change?
+4. TEST FIRST: Does a test file exist? Have you written failing tests FIRST?
+   □ If NO test file → STOP. Create test file with 5+ tests per function FIRST.
+   □ If test exists → add tests for the NEW behavior BEFORE editing source.
+   □ ALL 9 categories: happy, edge, error, boundary, security, integration, async, state, regression
+5. ALTERNATIVES: Did you consider 3+ approaches? Why is this one best?
+6. IMPACT: What other files will break? What tests need updating?
+7. STYLE: Match existing code patterns exactly. No @ts-ignore, no eslint-disable.
+8. SECURITY: No hardcoded secrets, parameterized queries, validated inputs.
+9. COMPLETENESS: Is this a FULL implementation, not a stub or partial?
+
+Write the test BEFORE the implementation. No exceptions.
+code-reviewer(sonnet) after edit. security-reviewer(opus) before commit.
 </pre-write-guard>
 EOF
 elif is_mutating_bash; then

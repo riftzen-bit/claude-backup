@@ -82,12 +82,26 @@ if [[ "$TOOL_NAME" == "ApplyPatch" ]] || \
 
   cat <<'EOF'
 <post-edit-review>
-File modified — 4-phase verification (from OmO):
-PHASE 1 — READ: Re-read every changed file. Check for stubs, TODOs, hardcoded values.
-PHASE 2 — CHECK: Run repo validators (build, types, lint, tests). Fix until clean.
-PHASE 3 — VERIFY: If UI, take screenshot. If API, test endpoint. If logic, trace the flow.
-PHASE 4 — GATE: Can you explain every change? Did you see it work? Confident nothing broke?
-After all edits: dispatch code-reviewer(sonnet). Before commit: dispatch security-reviewer(opus).
+FILE MODIFIED — MANDATORY ACTIONS NOW:
+
+1. RE-READ the changed file. Verify correctness line by line.
+2. SEARCH for all callers/importers of changed code — verify nothing breaks.
+3. TESTS — write/update for EVERY function touched:
+   □ 5+ tests per function, ALL 9 categories (happy, edge, error, boundary,
+     security, integration, async, state, regression)
+   □ 3+ edge cases (null, empty, zero, NaN, unicode, overflow, long strings)
+   □ 100% error paths with correct error types
+   □ REALISTIC test data — not "foo"/"bar"
+4. RUN tests — show ACTUAL output, not "tests pass"
+5. SHOW coverage — 100% on new/modified code
+6. RUN all validators (build, types, lint) — fix until clean
+7. VERIFY completeness:
+   □ No "...", no "TODO", no "// implement later", no truncated code
+   □ No stubs or partial implementations
+   □ All affected files updated (not just the target)
+
+FORBIDDEN: skipping test categories, partial tests, claiming done without evidence.
+code-reviewer(sonnet) after edits. security-reviewer(opus) before commit.
 </post-edit-review>
 EOF
 

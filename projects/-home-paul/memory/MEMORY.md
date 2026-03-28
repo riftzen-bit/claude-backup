@@ -27,9 +27,12 @@
 - [Model Routing Plugin](project_model_routing.md) — Phase 5 partially delivered
 - [Parallel Agents Plugin](project_parallel_agents.md) — v1.0.0 installed, tested, ready for GitHub
 
-## Config Overview (updated 2026-03-25, iteration 11 — full OmO adaptation)
-- Rules: 454 lines across `common/00-10` — anti-patterns, anti-duplication, context window mgmt, explore-before-ask, notepad, auto-continue, 6-section delegation, 4-phase verification
-- Agents: 562 lines across 7 agents — all upgraded with OmO-depth prompts (intent analysis, 4-phase verification, pragmatic minimalism, zero-error loop, gap analysis, date awareness, anti-pattern detection)
-- Hooks: 803 lines across 8 hooks — per-message injection (6 sections: enforce + roster + routing + delegation + cross-tool + project + git + todo-continuation), per-tool injection (4-phase edit review, directory AGENTS.md context, hallucination guard, 6-section agent routing with anti-duplication), 8-section compaction recovery, notepad auto-init
+## References
+- [AI Quality Stats](reference_ai_quality_stats.md) — hard data on AI code flaws, justifies quality gates
+
+## Config Overview (updated 2026-03-26, iteration 12 — Droid AI cross-pollination)
+- Rules: 513 lines across `common/00-10` + `typescript/` — anti-patterns, anti-duplication, context window mgmt, explore-before-ask, notepad, auto-continue, 6-section delegation, 4-phase verification
+- Agents: 562 lines across 7 agents — OmO-depth prompts (intent analysis, 4-phase verification, pragmatic minimalism, zero-error loop, gap analysis, date awareness, anti-pattern detection)
+- Hooks: 775 lines across 9 hooks — per-message 8-section dynamic injection (enforce + roster + routing + delegation + cross-tool + project + git + notepad), per-tool injection, compaction recovery
 - [OmO patterns adapted](reference_omo_patterns.md) — comprehensive 3-iteration adaptation from full codebase analysis
-- Plugins (10), Agents (7), Skills (66+), Commands (5)
+- Plugins (14), Agents (7), Skills (68+), Commands (5)
