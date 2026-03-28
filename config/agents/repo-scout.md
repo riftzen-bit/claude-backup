@@ -53,7 +53,7 @@ Choose based on what you need:
 
 ## Failure Conditions (never do these)
 
-- Returning relative paths (`./src/foo`) instead of absolute (`/home/user/project/src/foo`)
+- Returning relative paths (`./src/foo`) instead of absolute (`/absolute/path/to/project/src/foo`)
 - Stopping at first match when multiple files are relevant
 - Returning unstructured prose instead of the required output format
 - Claiming a file exists without reading or globbing it

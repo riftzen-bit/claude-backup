@@ -70,7 +70,7 @@ MUTATING_BASH=$(printf '%s\n' "$PARSED" | sed -n '2p')
 
 # Optional ECC observation (disabled by default; explicit opt-in only)
 if [ "$CLAUDE_ENABLE_ECC_OBSERVE" = "1" ]; then
-  echo "$INPUT_JSON" | "$HOME/.claude/hooks/ecc-observe.sh" post >/dev/null 2>&1 &
+  echo "$INPUT_JSON" | __HOME__/.claude/hooks/ecc-observe.sh post >/dev/null 2>&1 &
 fi
 
 # ── EDIT TOOLS: full review ──
@@ -82,20 +82,26 @@ if [[ "$TOOL_NAME" == "ApplyPatch" ]] || \
 
   cat <<'EOF'
 <post-edit-review>
-File modified — 5-PHASE VERIFICATION (TDD-enforced):
+FILE MODIFIED — MANDATORY ACTIONS NOW:
 
-PHASE 1 — READ: Re-read every changed file. Check for stubs, TODOs, hardcoded values.
-PHASE 2 — TEST (MANDATORY):
-  [] Does a test file exist for this source file? If NO -> create it NOW.
-  [] Write tests for ALL new/changed behavior (min 5 cases per function).
-  [] Cover: happy path, edge cases, error handling, boundary, security.
-  [] Run tests. They MUST pass. Show output.
-PHASE 3 — CHECK: Run ALL repo validators (build, types, lint, tests). Fix until clean.
-PHASE 4 — VERIFY: If UI, take screenshot. If API, test endpoint. If logic, trace the flow.
-PHASE 5 — GATE: Every change explainable? Tests passing? Coverage adequate?
+1. RE-READ the changed file. Verify correctness line by line.
+2. SEARCH for all callers/importers of changed code — verify nothing breaks.
+3. TESTS — write/update for EVERY function touched:
+   □ 5+ tests per function, ALL 9 categories (happy, edge, error, boundary,
+     security, integration, async, state, regression)
+   □ 3+ edge cases (null, empty, zero, NaN, unicode, overflow, long strings)
+   □ 100% error paths with correct error types
+   □ REALISTIC test data — not "foo"/"bar"
+4. RUN tests — show ACTUAL output, not "tests pass"
+5. SHOW coverage — 100% on new/modified code
+6. RUN all validators (build, types, lint) — fix until clean
+7. VERIFY completeness:
+   □ No "...", no "TODO", no "// implement later", no truncated code
+   □ No stubs or partial implementations
+   □ All affected files updated (not just the target)
 
-After all edits: dispatch code-reviewer(sonnet). Before commit: dispatch security-reviewer(opus).
-The boulder never stops — tests are part of the work, not optional.
+FORBIDDEN: skipping test categories, partial tests, claiming done without evidence.
+code-reviewer(sonnet) after edits. security-reviewer(opus) before commit.
 </post-edit-review>
 EOF
 

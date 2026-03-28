@@ -1,6 +1,7 @@
 #!/bin/bash
 # PreToolUse hook — HARD enforcement: must re-read file before editing
 # Tracks which files have been read recently and blocks edits to stale files
+# Like oh-my-openagent's hashline validator — reject edits on stale state
 
 INPUT_JSON=$(cat)
 
@@ -149,8 +150,10 @@ if [ "$STATUS" = "WARN" ]; then
 
     cat <<'HEADER'
 <reread-enforcement>
-STALE FILE WARNING — You MUST re-read before editing!
-Memory degrades after tool calls. Trust the filesystem, not cache.
+╔══════════════════════════════════════════════════════════════════════╗
+║  STALE FILE WARNING — You MUST re-read before editing!             ║
+║  Memory degrades after tool calls. Trust the filesystem, not cache.║
+╚══════════════════════════════════════════════════════════════════════╝
 HEADER
 
     if [ -n "$NEVER_READ" ]; then

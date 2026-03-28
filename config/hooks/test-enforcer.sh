@@ -1,6 +1,7 @@
 #!/bin/bash
 # PostToolUse hook — MANDATORY test enforcement after every file edit
-# Checks if tests exist for modified files and demands test creation
+# Inspired by oh-my-openagent's todoContinuationEnforcer + Momus (ruthless reviewer)
+# This hook checks if tests exist for modified files and demands test creation
 
 INPUT_JSON=$(cat)
 
@@ -75,6 +76,12 @@ EXEMPT_PATTERNS = [
     ".d.ts", "types.ts", "types/", "interfaces/",
     "__mocks__/", "testutils", "test-utils",
     ".stories.", ".storybook",
+    # Claude Code config files
+    ".claude/", "enforce.md", "hooks/", "agents/", "rules/",
+    "commands/", "skills/", "plugins/", ".omc/",
+    # Non-code
+    ".md", ".json", ".yaml", ".yml", ".toml", ".xml",
+    ".sh", ".bash", ".zsh",
 ]
 
 # Test file naming patterns by language
@@ -200,7 +207,10 @@ STATUS=$(echo "$RESULT" | head -1)
 if [ "$STATUS" = "MISSING_TESTS" ]; then
     cat <<'HEADER'
 <test-enforcement-gate>
-MANDATORY TEST ENFORCEMENT — Tests MUST be created for ALL code.
+╔══════════════════════════════════════════════════════════════════════╗
+║  MANDATORY TEST ENFORCEMENT — Tests MUST be created for ALL code   ║
+║  Like oh-my-openagent's Momus: ruthless, no exceptions.            ║
+╚══════════════════════════════════════════════════════════════════════╝
 
 CRITICAL: You modified source file(s) that have NO corresponding test files.
 You MUST create tests BEFORE moving on. This is non-negotiable.
@@ -210,7 +220,7 @@ HEADER
 
     echo "$RESULT" | grep "^FILE:" | while read -r line; do
         FILE="${line#FILE:}"
-        SUGGEST=$(echo "$RESULT" | grep -A2 "^FILE:${FILE}$" | grep "^SUGGEST:" | head -1)
+        SUGGEST=$(echo "$RESULT" | grep -F -A2 "FILE:${FILE}" | grep "^SUGGEST:" | head -1)
         SUGGEST="${SUGGEST#SUGGEST:}"
         printf '  - Source: %s\n' "$FILE"
         printf '    Create: %s\n' "$SUGGEST"
@@ -243,13 +253,28 @@ FOOTER
 
 elif [ "$STATUS" = "TESTS_OK" ]; then
     cat <<'EOF'
-<test-status>
-Tests exist for modified files. After completing edits:
-1. Run existing tests to verify no regressions
-2. Add NEW test cases for new/changed behavior
-3. Verify edge cases and error paths are covered
-4. Run full test suite before claiming done
-</test-status>
+<test-enforcement-existing>
+Test file exists — but that is NOT enough. You MUST now:
+
+1. ADD tests for ALL new/changed behavior in this edit
+2. Verify ALL 9 MANDATORY test categories are covered:
+   □ Happy path (3+ input variations)
+   □ Edge cases (null, empty, zero, NaN, unicode, long strings)
+   □ Error handling (every error path, correct error types)
+   □ Boundary (off-by-one, min/max, overflow)
+   □ Security (injection, XSS, path traversal — if data-touching)
+   □ Integration (API contracts, dependency interactions)
+   □ Async (race conditions, timeouts, rejections — if async)
+   □ State (transitions, side effects, cleanup — if stateful)
+   □ Regression (exact bug scenario — if fixing a bug)
+3. Run tests NOW and show actual output
+4. Show coverage numbers — 100% on modified code
+5. If ANY category is missing for ANY function → add it NOW
+
+Having a test file with 2 tests is NOT acceptable.
+5+ tests per function. 3+ edge cases per function. ALL categories.
+Do NOT move on until tests are comprehensive and passing.
+</test-enforcement-existing>
 EOF
 fi
 

@@ -1,8 +1,9 @@
 #!/bin/bash
-# UserPromptSubmit — comprehensive context injection on every user message
-# Uses JSON additionalContext format for reliable injection
+# UserPromptSubmit — OmO-style comprehensive injection on every user message
+# FIXED: Uses JSON additionalContext format (plain text stdout is buggy in Claude Code)
+# See: https://github.com/anthropics/claude-code/issues/13912
 
-STATE_DIR="$HOME/.claude/state"
+STATE_DIR="__HOME__/.claude/state"
 mkdir -p "$STATE_DIR"
 
 # ══════════════════════════════════════════════════════════
@@ -11,7 +12,7 @@ mkdir -p "$STATE_DIR"
 CTX=""
 
 # SECTION 1: Core enforcement (from enforce.md)
-ENFORCE_FILE="$HOME/.claude/enforce.md"
+ENFORCE_FILE="__HOME__/.claude/enforce.md"
 [ -f "$ENFORCE_FILE" ] && CTX="$(cat "$ENFORCE_FILE")"
 
 # SECTION 2: Agent roster + routing table
@@ -148,16 +149,17 @@ Read .claude/notepads/${TASK_NAME}/ before starting new work. Resume incomplete 
 fi
 
 # ══════════════════════════════════════════════════════════
-# OUTPUT: JSON with additionalContext for reliable injection
+# OUTPUT: systemMessage (visible warning) + additionalContext (full injection)
+# systemMessage = shown to user as warning in UI
+# additionalContext = injected into Claude's context (discrete)
 # ══════════════════════════════════════════════════════════
 
 # Count active sections for summary
-SECTION_COUNT=0
-echo "$CTX" | grep -qc '<' && SECTION_COUNT=$(echo "$CTX" | grep -o '<[a-z-]*>' | sort -u | wc -l)
+SECTION_COUNT=$(echo "$CTX" | grep -o '<[a-z-]*>' | sort -u | wc -l)
 CTX_LEN=${#CTX}
 
 # Build visible summary for systemMessage
-SUMMARY="[Inject] ${SECTION_COUNT} sections | ${CTX_LEN} chars"
+SUMMARY="[OmO Inject] ${SECTION_COUNT} sections | ${CTX_LEN} chars"
 [ -n "$PROJECT_LANGS" ] && SUMMARY="${SUMMARY} | ${PROJECT_LANGS}"
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 && SUMMARY="${SUMMARY} | $(git branch --show-current 2>/dev/null)"
 

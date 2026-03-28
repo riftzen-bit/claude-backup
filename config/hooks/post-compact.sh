@@ -1,17 +1,19 @@
 #!/bin/bash
 # SessionStart[compact] hook — restore context after compaction
+# Adapted from OmO's Compaction Context Injector (8-section structured recovery)
 
+MEMORY_FILE="__HOME__/.claude/projects/-home-paul/memory/MEMORY.md"
 ENFORCE_FILE="__HOME__/.claude/enforce.md"
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  GIT_STEP="   d) git log --oneline -10 — recent work context\n   e) Any files you were actively editing before compaction"
+  GIT_STEP="   e) git log --oneline -10 — recent work context\n   f) Any files you were actively editing before compaction"
 else
-  GIT_STEP="   d) Any files you were actively editing before compaction"
+  GIT_STEP="   e) Any files you were actively editing before compaction"
 fi
 
 # Check for active notepads
 NOTEPAD_MSG=""
 if [ -d ".claude/notepads" ] && [ "$(ls -A .claude/notepads 2>/dev/null)" ]; then
-  NOTEPAD_MSG="   f) Active notepads: .claude/notepads/ — read learnings before resuming work"
+  NOTEPAD_MSG="   g) Active notepads: .claude/notepads/ — read learnings before resuming work"
 fi
 
 cat <<EOF
@@ -21,13 +23,19 @@ COMPACTION DETECTED — FULL CONTEXT RE-INJECTION
 Your context was just compacted. You MUST re-orient NOW:
 
 1. READ IMMEDIATELY (in this order):
-   a) $ENFORCE_FILE — mandatory rules for every message
-   b) __HOME__/.claude/CLAUDE.md — global config hub
-   c) __HOME__/.claude/rules/common/ and __HOME__/.claude/rules/typescript/
+   a) $MEMORY_FILE — user profile, feedback history, project state
+   b) $ENFORCE_FILE — mandatory rules for every message
+   c) __HOME__/.claude/CLAUDE.md — global config hub
+   d) __HOME__/.claude/rules/common/ and __HOME__/.claude/rules/typescript/
 $GIT_STEP
 ${NOTEPAD_MSG}
 
-2. RESUME WORK — use this checklist to reconstruct context:
+2. IDENTITY REMINDER:
+   Owner: Paul, Vietnamese speaker, non-programmer, PST timezone
+   Language: Vietnamese (conversation), English (code)
+   Model policy: Opus leads ambiguity/architecture/security; delegate simpler work
+
+3. RESUME WORK — use this checklist to reconstruct context:
    a) What were all the user's original requests? (check conversation summary)
    b) What is the final goal?
    c) What work has been completed? (check git diff, modified files)

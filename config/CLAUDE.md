@@ -47,12 +47,12 @@ Tests are written FIRST (TDD), not after. The boulder never stops.
 3. **REFACTOR**: Clean up while keeping tests green
 4. **REPEAT** for every function, method, and code path
 
-### Required Test Categories (write ALL that apply)
+### Required Test Categories (write ALL — not optional)
 | Category | What to test |
 |----------|-------------|
-| Happy path | Normal inputs -> expected outputs |
-| Edge cases | Empty, null, undefined, zero, NaN, max values, unicode |
-| Error handling | Invalid inputs throw/return proper errors |
+| Happy path | Normal inputs -> expected outputs (3+ variations) |
+| Edge cases | Empty, null, undefined, zero, NaN, max values, unicode, emojis |
+| Error handling | Invalid inputs throw/return proper errors with correct types |
 | Boundary | Off-by-one, min/max, overflow, timeout |
 | Security | SQL/XSS/command injection, auth bypass, path traversal |
 | Integration | Component interactions, API contracts |
@@ -73,9 +73,9 @@ Tests are written FIRST (TDD), not after. The boulder never stops.
 ### Completion Gate
 Before claiming "done", ALL must be true:
 - [ ] Every modified source file has a test file
-- [ ] Every new function has 5+ test cases
-- [ ] Edge cases covered (null, empty, boundary)
-- [ ] Error paths have explicit tests
+- [ ] Every new function has 5+ test cases covering ALL 9 categories
+- [ ] Edge cases covered (null, empty, boundary, unicode, overflow)
+- [ ] Error paths have explicit tests with correct error types
 - [ ] Security-sensitive code has injection tests
 - [ ] Tests passing (show actual output)
 - [ ] No skipped/disabled/TODO tests
@@ -90,3 +90,7 @@ Before claiming "done", ALL must be true:
 - Prefer direct tools for one-step work; use agents to save cost on search, planning, review, and validation
 - After compaction: re-read `CLAUDE.md`, recent git log, and active files
 - NEVER skip writing tests. Tests are mandatory, not optional. They are part of the definition of "done."
+- NEVER truncate, abbreviate, or give partial answers. Complete implementations only.
+- NEVER write "etc.", "...", "TODO", or "implement later" — write the full code.
+- Search the codebase THOROUGHLY before writing any code (3+ queries minimum).
+- Analyze 3+ alternatives before any implementation decision.

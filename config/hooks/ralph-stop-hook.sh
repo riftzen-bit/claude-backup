@@ -1,5 +1,5 @@
 #!/bin/bash
-# Stop hook — Ralph loop (reliable, no plugin dependency)
+# Stop hook — Ralph Wiggum loop (reliable, no plugin dependency)
 # When RALPH_MODE is active, prevents Claude from stopping
 # Activate: export CLAUDE_RALPH_MODE=1 before starting claude
 # Deactivate: unset CLAUDE_RALPH_MODE or create ~/.claude/state/ralph-stop
