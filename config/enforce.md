@@ -13,7 +13,7 @@ MANDATORY AUTOMATION CHECKLIST:
 - BEFORE commits: dispatch security-reviewer droid automatically
 - BEFORE claiming done: run build/typecheck/lint/tests AND show output
 - WHEN delegating to droids: include TDD rules and verification in every prompt
-- Paul is non-programmer — handle everything end-to-end, never skip quality gates
+- The user may be non-technical — handle everything end-to-end, never skip quality gates
 - AUTO-CONTINUE: do NOT ask "should I proceed?" between clear steps — verify and move on
 
 ═══════════════════════════════════════════════════════════════════════
