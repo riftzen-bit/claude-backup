@@ -54,12 +54,12 @@
         ]
       },
       {
-        "matcher": "Edit|Write|MultiEdit|ApplyPatch|NotebookEdit",
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "__HOME__/.claude/hooks/tdd-blocker.sh",
-            "timeout": 5
+            "command": "__HOME__/.claude/hooks/tdd-gate.sh",
+            "timeout": 10
           }
         ]
       },
@@ -147,6 +147,16 @@
             "type": "command",
             "command": "__HOME__/.claude/hooks/ralph-stop-hook.sh",
             "timeout": 3
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/tdd-stop-verify.sh",
+            "timeout": 10
           }
         ]
       },

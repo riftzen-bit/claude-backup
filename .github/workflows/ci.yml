@@ -172,6 +172,38 @@ jobs:
           echo "" | ~/.claude/hooks/pre-write-guard.sh
           echo "✓ empty stdin handled"
 
+      - name: Test TDD gate enforcement
+        run: |
+          # Test 1: Block source file without test (exit 2)
+          mkdir -p /tmp/tdd-ci-test
+          echo 'code' > /tmp/tdd-ci-test/app.ts
+          rc=0
+          echo '{"tool_name":"Edit","file_path":"/tmp/tdd-ci-test/app.ts"}' | ~/.claude/hooks/tdd-gate.sh > /dev/null 2>&1 || rc=$?
+          [ "$rc" -eq 2 ] && echo "✓ tdd-gate blocks source without test (exit 2)" || { echo "✗ Expected exit 2, got $rc"; exit 1; }
+
+          # Test 2: Allow when test exists (exit 0)
+          echo 'test' > /tmp/tdd-ci-test/app.test.ts
+          rc=0
+          echo '{"tool_name":"Edit","file_path":"/tmp/tdd-ci-test/app.ts"}' | ~/.claude/hooks/tdd-gate.sh > /dev/null 2>&1 || rc=$?
+          [ "$rc" -eq 0 ] && echo "✓ tdd-gate allows when test exists (exit 0)" || { echo "✗ Expected exit 0, got $rc"; exit 1; }
+
+          # Test 3: Always allow test files (exit 0)
+          rc=0
+          echo '{"tool_name":"Write","file_path":"/tmp/tdd-ci-test/app.test.ts"}' | ~/.claude/hooks/tdd-gate.sh > /dev/null 2>&1 || rc=$?
+          [ "$rc" -eq 0 ] && echo "✓ tdd-gate allows test files (exit 0)" || { echo "✗ Expected exit 0, got $rc"; exit 1; }
+
+          # Test 4: Skip non-edit tools (exit 0)
+          rc=0
+          echo '{"tool_name":"Read","file_path":"/tmp/tdd-ci-test/app.ts"}' | ~/.claude/hooks/tdd-gate.sh > /dev/null 2>&1 || rc=$?
+          [ "$rc" -eq 0 ] && echo "✓ tdd-gate skips non-edit tools (exit 0)" || { echo "✗ Expected exit 0, got $rc"; exit 1; }
+
+          # Test 5: Exempt config files (exit 0)
+          rc=0
+          echo '{"tool_name":"Edit","file_path":"/tmp/tdd-ci-test/package.json"}' | ~/.claude/hooks/tdd-gate.sh > /dev/null 2>&1 || rc=$?
+          [ "$rc" -eq 0 ] && echo "✓ tdd-gate exempts config files (exit 0)" || { echo "✗ Expected exit 0, got $rc"; exit 1; }
+
+          rm -rf /tmp/tdd-ci-test
+
   install-macos:
     name: Install Test — macOS
     runs-on: macos-latest
@@ -237,8 +269,8 @@ jobs:
           }
           Write-Host "✓ Paths replaced"
           $hookCount = (Get-ChildItem (Join-Path $target "hooks\*.sh")).Count
-          if ($hookCount -ne 13) {
-            Write-Error "Expected 13 hooks, found $hookCount"; exit 1
+          if ($hookCount -ne 14) {
+            Write-Error "Expected 14 hooks, found $hookCount"; exit 1
           }
           Write-Host "✓ $hookCount hook scripts"
           $agentCount = (Get-ChildItem (Join-Path $target "agents\*.md")).Count

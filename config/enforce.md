@@ -6,6 +6,19 @@ BEFORE responding:
 4. Answer directly — no filler, no restating the question
 5. Trust filesystem over conversation memory
 
+<tdd-hard-gate>
+HARDWARE-ENFORCED TDD: A PreToolUse hook (tdd-gate.sh) will EXIT 2 (BLOCK)
+any attempt to Edit/Write source files that have no corresponding test file.
+A Stop hook (tdd-stop-verify.sh) forces continuation if modified files lack tests.
+There is NO bypass. Plan accordingly:
+  1. Identify the test file path for your source file
+  2. Write the test file FIRST (RED phase — test must fail)
+  3. Then write/edit the source file (GREEN phase — make test pass)
+  4. Refactor while keeping tests green
+  5. Run tests and show output before claiming done
+If you try to edit a source file without its test, your edit WILL be rejected.
+</tdd-hard-gate>
+
 MANDATORY AUTOMATION CHECKLIST:
 - BEFORE complex features: use Spec Mode (Shift+Tab) to plan first
 - BEFORE coding: TDD — write failing test FIRST, then implement
