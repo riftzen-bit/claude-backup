@@ -15,6 +15,17 @@ CTX=""
 ENFORCE_FILE="__HOME__/.claude/enforce.md"
 [ -f "$ENFORCE_FILE" ] && CTX="$(cat "$ENFORCE_FILE")"
 
+# SECTION 1.5: Pre-action checklist (every message)
+CTX="${CTX}
+
+<pre-action>
+STOP. Before doing anything:
+1. Read target files FIRST. Hook will BLOCK edits to unread files.
+2. Classify task complexity and plan your approach.
+3. For medium+ tasks: state plan before touching code.
+After discoveries: save to memory (populate it if sparse).
+</pre-action>"
+
 # SECTION 2: Agent roster + routing table
 CTX="${CTX}
 
@@ -148,6 +159,19 @@ Read .claude/notepads/${TASK_NAME}/ before starting new work. Resume incomplete 
   fi
 fi
 
+# SECTION 7: Memory health check (generic path via __HOME__ placeholder)
+HOME_SLUG=$(echo "__HOME__" | tr '/' '-')
+MEMORY_FILE="__HOME__/.claude/projects/${HOME_SLUG}/memory/MEMORY.md"
+if [ -f "$MEMORY_FILE" ]; then
+  ENTRY_COUNT=$(grep -c '^\-' "$MEMORY_FILE" 2>/dev/null || echo 0)
+  if [ "$ENTRY_COUNT" -lt 5 ]; then
+    CTX="${CTX}
+<memory-alert>
+MEMORY.md has only ${ENTRY_COUNT} entries — nearly empty. Save discoveries NOW.
+</memory-alert>"
+  fi
+fi
+
 # ══════════════════════════════════════════════════════════
 # OUTPUT: systemMessage (visible warning) + additionalContext (full injection)
 # systemMessage = shown to user as warning in UI
@@ -159,7 +183,7 @@ SECTION_COUNT=$(echo "$CTX" | grep -o '<[a-z-]*>' | sort -u | wc -l)
 CTX_LEN=${#CTX}
 
 # Build visible summary for systemMessage
-SUMMARY="[OmO Inject] ${SECTION_COUNT} sections | ${CTX_LEN} chars"
+SUMMARY="[OmO] ${SECTION_COUNT}sec | Read->Plan->Execute"
 [ -n "$PROJECT_LANGS" ] && SUMMARY="${SUMMARY} | ${PROJECT_LANGS}"
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 && SUMMARY="${SUMMARY} | $(git branch --show-current 2>/dev/null)"
 

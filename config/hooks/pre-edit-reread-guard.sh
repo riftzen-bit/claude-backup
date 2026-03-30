@@ -6,6 +6,7 @@
 INPUT_JSON=$(cat)
 
 RESULT=$(INPUT_JSON="$INPUT_JSON" python3 - <<'PY'
+import hashlib
 import json
 import os
 import sys
@@ -55,16 +56,8 @@ except:
 
 tool_name = find_first(data, {"tool_name", "tool"})
 
-# Track reads: when a file is read, record the timestamp
+# Track reads: when a file is read, record timestamp AND tool counter
 if tool_name in ("Read", "Grep", "Glob", "Cat"):
-    paths = find_all_paths(data, {"file_path", "path", "filePath"})
-    for p in paths:
-        if p and os.path.isfile(p):
-            safe_name = p.replace("/", "__").replace(".", "_")
-            tracker = os.path.join(READS_DIR, safe_name)
-            with open(tracker, "w") as f:
-                f.write(str(time.time()))
-    # Increment tool counter
     counter_file = os.path.join(STATE_DIR, "tool-call-counter")
     count = 0
     if os.path.exists(counter_file):
@@ -72,6 +65,13 @@ if tool_name in ("Read", "Grep", "Glob", "Cat"):
             count = int(open(counter_file).read().strip())
         except:
             count = 0
+    paths = find_all_paths(data, {"file_path", "path", "filePath"})
+    for p in paths:
+        if p and os.path.isfile(p):
+            safe_name = hashlib.md5(p.encode()).hexdigest()
+            tracker = os.path.join(READS_DIR, safe_name)
+            with open(tracker, "w") as f:
+                f.write(f"{time.time()}:{count}")
     with open(counter_file, "w") as f:
         f.write(str(count + 1))
     sys.exit(0)
@@ -112,8 +112,12 @@ for p in paths:
     if any(pat in basename for pat in skip_patterns):
         continue
 
+    # New-file detection — don't block creating new files via Write
+    if tool_name == "Write" and not os.path.isfile(p):
+        continue
+
     # Check if this file was recently read
-    safe_name = p.replace("/", "__").replace(".", "_")
+    safe_name = hashlib.md5(p.encode()).hexdigest()
     tracker = os.path.join(READS_DIR, safe_name)
 
     if not os.path.exists(tracker):
@@ -122,16 +126,24 @@ for p in paths:
         continue
 
     try:
-        last_read = float(open(tracker).read().strip())
+        raw = open(tracker).read().strip()
+        if ":" in raw:
+            last_read = float(raw.split(":")[0])
+            read_at_count = int(raw.split(":")[1])
+        else:
+            last_read, read_at_count = float(raw), 0
     except:
         warnings.append(f"NEVER_READ|{p}")
         continue
 
     elapsed = time.time() - last_read
+    tools_since = count - read_at_count
 
     if elapsed > MAX_STALE_SECONDS:
         minutes = int(elapsed / 60)
         warnings.append(f"STALE|{p}|{minutes}m ago")
+    elif tools_since > MAX_TOOLS_SINCE_READ:
+        warnings.append(f"STALE|{p}|{tools_since} tool calls since read")
 
 if warnings:
     print("WARN")
@@ -148,19 +160,29 @@ if [ "$STATUS" = "WARN" ]; then
     NEVER_READ=$(echo "$RESULT" | grep "^NEVER_READ|")
     STALE=$(echo "$RESULT" | grep "^STALE|")
 
-    cat <<'HEADER'
+    if [ -n "$NEVER_READ" ]; then
+        cat <<'HEADER'
 <reread-enforcement>
 ╔══════════════════════════════════════════════════════════════════════╗
-║  STALE FILE WARNING — You MUST re-read before editing!             ║
+║  EDIT BLOCKED — File(s) never read in this session!                ║
+║  You MUST Read() first. This edit has been REJECTED (exit 2).      ║
+╚══════════════════════════════════════════════════════════════════════╝
+HEADER
+    else
+        cat <<'HEADER'
+<reread-enforcement>
+╔══════════════════════════════════════════════════════════════════════╗
+║  STALE FILE WARNING — Re-read before editing!                      ║
 ║  Memory degrades after tool calls. Trust the filesystem, not cache.║
 ╚══════════════════════════════════════════════════════════════════════╝
 HEADER
+    fi
 
     if [ -n "$NEVER_READ" ]; then
         echo ""
-        echo "FILES NEVER READ in this session (CRITICAL — read them FIRST):"
+        echo "FILES NEVER READ — EDIT BLOCKED (Read these files, then retry):"
         echo "$NEVER_READ" | while IFS='|' read -r _ filepath; do
-            printf '  !! %s — MUST Read() this file before editing!\n' "$filepath"
+            printf '  BLOCKED: %s — Read() this file first, then retry your edit.\n' "$filepath"
         done
     fi
 
@@ -178,6 +200,11 @@ ACTION REQUIRED: Use Read() on each file above BEFORE proceeding with this edit.
 Do NOT edit from memory. Do NOT guess file contents. Read it fresh.
 </reread-enforcement>
 FOOTER
+fi
+
+# HARD BLOCK for never-read files; advisory-only for stale files
+if [ -n "$NEVER_READ" ]; then
+    exit 2
 fi
 
 exit 0
