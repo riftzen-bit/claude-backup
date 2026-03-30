@@ -35,51 +35,8 @@ Read before action:
 ## Commands
 - `/route`, `/design`, `/routing-stats`, `/self-optimize`, `/benchmark`
 
-## MANDATORY Testing Protocol
-
-### The Iron Law
-Every source file MUST have a corresponding test file. No exceptions. No "later."
-Tests are written FIRST (TDD), not after. The boulder never stops.
-
-### TDD Cycle (RED -> GREEN -> REFACTOR)
-1. **RED**: Write a failing test describing desired behavior
-2. **GREEN**: Write MINIMUM code to pass the test
-3. **REFACTOR**: Clean up while keeping tests green
-4. **REPEAT** for every function, method, and code path
-
-### Required Test Categories (write ALL — not optional)
-| Category | What to test |
-|----------|-------------|
-| Happy path | Normal inputs -> expected outputs (3+ variations) |
-| Edge cases | Empty, null, undefined, zero, NaN, max values, unicode, emojis |
-| Error handling | Invalid inputs throw/return proper errors with correct types |
-| Boundary | Off-by-one, min/max, overflow, timeout |
-| Security | SQL/XSS/command injection, auth bypass, path traversal |
-| Integration | Component interactions, API contracts |
-| Async/Race | Concurrent access, promise rejection, timeout |
-| State | State transitions, side effects, cleanup |
-| Regression | Exact scenario that caused a bug |
-
-### Minimum Requirements
-- 5+ test cases per exported function/method
-- 3+ edge case tests per function
-- 100% coverage of error paths
-- 100% coverage of public API surface
-- Mock external deps, test real logic
-- Test BOTH success AND failure scenarios
-- Use realistic test data, not "foo"/"bar"
-- Coverage: 80%+ overall, 100% new code
-
-### Completion Gate
-Before claiming "done", ALL must be true:
-- [ ] Every modified source file has a test file
-- [ ] Every new function has 5+ test cases covering ALL 9 categories
-- [ ] Edge cases covered (null, empty, boundary, unicode, overflow)
-- [ ] Error paths have explicit tests with correct error types
-- [ ] Security-sensitive code has injection tests
-- [ ] Tests passing (show actual output)
-- [ ] No skipped/disabled/TODO tests
-- [ ] Build, lint, typecheck all pass
+## Testing
+TDD enforced by hooks (tdd-gate.sh). Full rules in `rules/common/03-testing.md`.
 
 ## Non-Negotiables
 - Ask concise product-intent questions when behavior, scope, or acceptance criteria are unclear; never guess missing requirements
@@ -93,4 +50,3 @@ Before claiming "done", ALL must be true:
 - NEVER truncate, abbreviate, or give partial answers. Complete implementations only.
 - NEVER write "etc.", "...", "TODO", or "implement later" — write the full code.
 - Search the codebase THOROUGHLY before writing any code (3+ queries minimum).
-- Analyze 3+ alternatives before any implementation decision.

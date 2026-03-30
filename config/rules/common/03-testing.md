@@ -18,6 +18,17 @@ Every change needs a test: new function, bug fix, API endpoint, logic change, er
 - Prefer integration tests over heavily-mocked unit tests for AI-generated code
 - Before writing tests, assess test infrastructure: detect framework, check for existing test patterns, decide TDD vs tests-after based on project conventions
 
+## Test Structure (Arrange-Act-Assert)
+
+Every test: set up data → call function → verify result. Follow project's existing naming convention. If none exists: `src/utils/foo.ts` → `src/utils/__tests__/foo.test.ts`, `lib/auth.py` → `tests/test_auth.py`.
+
+## Test Minimums
+
+- 5+ test cases per exported function/method
+- 3+ edge case tests per function (null, empty, boundary, overflow)
+- 100% coverage of error paths and public API surface
+- Test categories: happy path, edge cases, error handling, boundary, security, integration, async/race, state, regression
+
 ## Coverage
 
 - Minimum: 80% overall
