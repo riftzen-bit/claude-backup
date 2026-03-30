@@ -165,7 +165,7 @@ jobs:
           echo "✓ post-tool.sh"
           echo '{"tool_name":"Bash","command":"npm install","output":"Cannot find module fake-pkg"}' | ~/.claude/hooks/post-tool.sh | grep -q "hallucination-warning"
           echo "✓ hallucination guard"
-          ~/.claude/hooks/remind.sh < /dev/null | grep -q "user-prompt-submit-hook"
+          ~/.claude/hooks/remind.sh < /dev/null | grep -q "<enforce>"
           echo "✓ remind.sh"
           ~/.claude/hooks/session-start.sh < /dev/null 2>&1 | grep -q "SessionStart"
           echo "✓ session-start.sh"
@@ -239,7 +239,7 @@ jobs:
           echo "✓ post-tool.sh on macOS"
           echo '{"tool_name":"Bash","command":"npm install","output":"Cannot find module fake-pkg"}' | ~/.claude/hooks/post-tool.sh | grep -q "hallucination-warning"
           echo "✓ hallucination guard on macOS"
-          ~/.claude/hooks/remind.sh < /dev/null | grep -q "user-prompt-submit-hook"
+          ~/.claude/hooks/remind.sh < /dev/null | grep -q "<enforce>"
           echo "✓ remind.sh on macOS"
 
   install-windows:
@@ -292,7 +292,7 @@ jobs:
             bash -n "$f" && echo "✓ $(basename $f) syntax" || echo "✗ $(basename $f)"
           done
           output=$(HOME="$USERPROFILE" "$CLAUDE_DIR/hooks/remind.sh" < /dev/null 2>/dev/null || true)
-          echo "$output" | grep -q "user-prompt-submit-hook"
+          echo "$output" | grep -q "<enforce>"
           echo "✓ remind.sh on Windows Git Bash"
           output=$(echo '{"tool_name":"Edit","file_path":"test.ts"}' | "$CLAUDE_DIR/hooks/pre-write-guard.sh" 2>/dev/null || true)
           echo "$output" | grep -q "pre-write-guard"
